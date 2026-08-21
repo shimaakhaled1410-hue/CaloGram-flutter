@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/features/presentation/auth/login/login_view.dart';
 import 'package:calogram_flutter/features/presentation/onboarding/onboarding_view.dart';
 import 'package:calogram_flutter/features/presentation/splash/splash_view.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,10 @@ abstract class AppRouter {
       GoRoute(
         path: AppRoutes.onboardingScreen,
         builder: (context, state) => const OnboardingView(),
+      ),
+      GoRoute(
+        path: AppRoutes.loginScreen,
+        builder: (context, state) => const LoginView(),
       ),
     ],
   );

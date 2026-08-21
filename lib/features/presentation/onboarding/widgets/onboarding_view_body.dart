@@ -1,5 +1,5 @@
 import 'package:calogram_flutter/core/router/app_routes.dart';
-import 'package:calogram_flutter/data/models/onboarding_model.dart';
+import 'package:calogram_flutter/features/data/models/onboarding_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_constants.dart';

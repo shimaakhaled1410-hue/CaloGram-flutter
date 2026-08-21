@@ -1,4 +1,4 @@
-import 'package:calogram_flutter/data/models/onboarding_model.dart';
+import 'package:calogram_flutter/features/data/models/onboarding_model.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
