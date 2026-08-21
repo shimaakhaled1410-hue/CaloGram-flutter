@@ -97,7 +97,7 @@ class _RegisterFormState extends State<RegisterForm> {
             text: 'Create Account',
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                GoRouter.of(context).pushReplacement(AppRoutes.dashboardScreen);
+                context.go(AppRoutes.goalSetupScreen);
               }
             },
           ),

@@ -51,16 +51,15 @@ class _SplashViewBodyState extends State<SplashViewBody>
           CacheHelper.getBool(key: AppConstants.isOnboardingSeen) ?? false;
       final bool isGuest =
           CacheHelper.getBool(key: AppConstants.isGuestUser) ?? false;
-      final String? token = CacheHelper.getString(
-        key: AppConstants.cachedUserToken,
-      );
+      final String? token =
+          CacheHelper.getString(key: AppConstants.cachedUserToken);
 
       if (!isOnboardingSeen) {
-        GoRouter.of(context).pushReplacement(AppRoutes.onboardingScreen);
+        context.go(AppRoutes.onboardingScreen);
       } else if (isGuest || (token != null && token.isNotEmpty)) {
-        GoRouter.of(context).pushReplacement(AppRoutes.dashboardScreen);
+        context.go(AppRoutes.dashboardScreen);
       } else {
-        GoRouter.of(context).pushReplacement(AppRoutes.loginScreen);
+        context.go(AppRoutes.loginScreen);
       }
     });
   }

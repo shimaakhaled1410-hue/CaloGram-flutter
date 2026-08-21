@@ -32,7 +32,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
   Future<void> _continueAsGuest() async {
     await CacheHelper.setData(key: AppConstants.isGuestUser, value: true);
     if (!mounted) return;
-    GoRouter.of(context).pushReplacement(AppRoutes.dashboardScreen);
+    context.go(AppRoutes.goalSetupScreen);
   }
 
   @override
@@ -70,7 +70,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  'Welcome Back 👋',
+                  'Welcome Back!',
                   style: AppTextStyles.font28BoldWhite,
                 ),
                 const SizedBox(height: 8),
@@ -137,8 +137,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                   text: 'Log In',
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      GoRouter.of(context)
-                          .pushReplacement(AppRoutes.dashboardScreen);
+                      context.go(AppRoutes.goalSetupScreen);
                     }
                   },
                 ),
@@ -173,7 +172,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).push(AppRoutes.registerScreen);
+                        context.push(AppRoutes.registerScreen);
                       },
                       child: Text(
                         'Sign Up',

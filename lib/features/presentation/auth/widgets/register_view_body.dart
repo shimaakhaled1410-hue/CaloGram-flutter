@@ -16,9 +16,11 @@ class RegisterViewBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Create Account 🚀',
-                style: AppTextStyles.font28BoldWhite,
+              Center(
+                child: Text(
+                  'Create Account',
+                  style: AppTextStyles.font28BoldWhite,
+                ),
               ),
               const SizedBox(height: 8),
               Text(

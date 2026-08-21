@@ -47,7 +47,7 @@ class _OnboardingViewBodyState extends State<OnboardingViewBody> {
   Future<void> _completeOnboarding() async {
     await CacheHelper.setData(key: AppConstants.isOnboardingSeen, value: true);
     if (!mounted) return;
-    GoRouter.of(context).pushReplacement(AppRoutes.loginScreen);
+    context.go(AppRoutes.loginScreen);
   }
 
   @override
