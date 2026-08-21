@@ -27,7 +27,7 @@ abstract class AuthRepo {
     required int targetFats,
   });
 
-  Future<Either<Failure, UserEntity>> getCurrentUser();
+  Future<Either<Failure, UserEntity?>> getCurrentUser();
 
   Future<Either<Failure, void>> logout();
 }

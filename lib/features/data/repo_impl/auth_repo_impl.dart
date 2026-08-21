@@ -1,10 +1,10 @@
 import 'package:calogram_flutter/core/errors/failure.dart';
-import 'package:calogram_flutter/features/domain/repo/auth_repo.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/services/cache_helper.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../domain/repo/auth_repo.dart';
 import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepoImpl implements AuthRepo {
@@ -18,17 +18,24 @@ class AuthRepoImpl implements AuthRepo {
     required String password,
   }) async {
     try {
-      final user = await remoteDataSource.login(
+      final user = await remoteDataSource.signIn(
         email: email,
         password: password,
       );
-      await CacheHelper.setData(key: AppConstants.cachedUserToken, value: user.uId);
+      await CacheHelper.setData(
+        key: AppConstants.cachedUserToken,
+        value: user.uId,
+      );
       await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
       return Right(user);
-    } on FirebaseAuthException catch (e) {
-      return Left(ServerFailure(_mapFirebaseAuthException(e)));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('An unexpected error occurred'));
     }
   }
 
@@ -44,13 +51,20 @@ class AuthRepoImpl implements AuthRepo {
         email: email,
         password: password,
       );
-      await CacheHelper.setData(key: AppConstants.cachedUserToken, value: user.uId);
+      await CacheHelper.setData(
+        key: AppConstants.cachedUserToken,
+        value: user.uId,
+      );
       await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
       return Right(user);
-    } on FirebaseAuthException catch (e) {
-      return Left(ServerFailure(_mapFirebaseAuthException(e)));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('An unexpected error occurred'));
     }
   }
 
@@ -71,7 +85,7 @@ class AuthRepoImpl implements AuthRepo {
       final String? cachedUid =
           CacheHelper.getString(key: AppConstants.cachedUserToken);
       if (cachedUid == null || cachedUid.isEmpty) {
-        return Left(ServerFailure('User session not found'));
+        return Left(AuthFailure('User session not found'));
       }
 
       final Map<String, dynamic> data = {
@@ -93,52 +107,49 @@ class AuthRepoImpl implements AuthRepo {
       );
 
       return Right(updatedUser);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('An unexpected error occurred'));
     }
   }
 
   @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() async {
+  Future<Either<Failure, UserEntity?>> getCurrentUser() async {
     try {
       final String? cachedUid =
           CacheHelper.getString(key: AppConstants.cachedUserToken);
       if (cachedUid == null || cachedUid.isEmpty) {
-        return Left(ServerFailure('No active user session'));
+        return const Right(null);
       }
       final user = await remoteDataSource.getCurrentUser(cachedUid);
       return Right(user);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to get current user'));
     }
   }
 
   @override
   Future<Either<Failure, void>> logout() async {
     try {
-      await remoteDataSource.logout();
+      await remoteDataSource.signOut();
       await CacheHelper.removeData(key: AppConstants.cachedUserToken);
       await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
       return const Right(null);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  String _mapFirebaseAuthException(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'user-not-found':
-        return 'No user found for that email.';
-      case 'wrong-password':
-        return 'Wrong password provided.';
-      case 'email-already-in-use':
-        return 'The account already exists for that email.';
-      case 'invalid-email':
-        return 'The email address is not valid.';
-      case 'weak-password':
-        return 'The password provided is too weak.';
-      default:
-        return e.message ?? 'An unexpected authentication error occurred.';
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to sign out'));
     }
   }
 }
