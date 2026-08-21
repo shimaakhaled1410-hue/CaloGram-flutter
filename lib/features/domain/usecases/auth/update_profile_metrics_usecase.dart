@@ -1,7 +1,7 @@
 import 'package:calogram_flutter/core/errors/failure.dart';
 import 'package:calogram_flutter/features/domain/repo/auth_repo.dart';
 import 'package:dartz/dartz.dart';
-import '../entities/user_entity.dart';
+import '../../entities/user_entity.dart';
 
 class UpdateProfileMetricsUsecase {
   final AuthRepo authRepo;

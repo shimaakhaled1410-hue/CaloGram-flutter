@@ -1,7 +1,7 @@
-import 'package:calogram_flutter/features/domain/usecases/login_usecase.dart';
-import 'package:calogram_flutter/features/domain/usecases/logout_usecase.dart';
-import 'package:calogram_flutter/features/domain/usecases/register_usecase.dart';
-import 'package:calogram_flutter/features/domain/usecases/update_profile_metrics_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/login_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/logout_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/register_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/update_profile_metrics_usecase.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
