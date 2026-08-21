@@ -1,8 +1,10 @@
-import 'package:calogram_flutter/features/presentation/auth/login/login_view.dart';
+import 'package:calogram_flutter/core/router/app_routes.dart';
+import 'package:calogram_flutter/features/presentation/auth/login_view.dart';
+import 'package:calogram_flutter/features/presentation/auth/register_view.dart';
 import 'package:calogram_flutter/features/presentation/onboarding/onboarding_view.dart';
 import 'package:calogram_flutter/features/presentation/splash/splash_view.dart';
 import 'package:go_router/go_router.dart';
-import 'app_routes.dart';
+
 
 abstract class AppRouter {
   static final GoRouter router = GoRouter(
@@ -10,8 +12,7 @@ abstract class AppRouter {
     routes: [
       GoRoute(
         path: AppRoutes.splashScreen,
-        builder: (context, state) =>
-            const SplashView(),
+        builder: (context, state) => const SplashView(),
       ),
       GoRoute(
         path: AppRoutes.onboardingScreen,
@@ -20,6 +21,10 @@ abstract class AppRouter {
       GoRoute(
         path: AppRoutes.loginScreen,
         builder: (context, state) => const LoginView(),
+      ),
+      GoRoute(
+        path: AppRoutes.registerScreen,
+        builder: (context, state) => const RegisterView(),
       ),
     ],
   );

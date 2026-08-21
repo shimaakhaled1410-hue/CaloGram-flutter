@@ -1,4 +1,5 @@
 import 'package:calogram_flutter/core/router/app_routes.dart';
+import 'package:calogram_flutter/utils/app_regex.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_constants.dart';
@@ -87,8 +88,8 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                     color: AppColors.textMutedDark,
                   ),
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your email';
+                    if (value == null || !AppRegex.isEmailValid(value)) {
+                      return 'Please enter a valid email address';
                     }
                     return null;
                   },
@@ -110,9 +111,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                       color: AppColors.textMutedDark,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _isPasswordObscure = !_isPasswordObscure;
-                      });
+                      setState(() => _isPasswordObscure = !_isPasswordObscure);
                     },
                   ),
                   validator: (value) {
