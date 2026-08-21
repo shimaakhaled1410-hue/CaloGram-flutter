@@ -5,6 +5,7 @@ import 'package:calogram_flutter/features/domain/usecases/login_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/logout_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/register_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/update_profile_metrics_usecase.dart';
+import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -41,5 +42,15 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<LogoutUsecase>(
     () => LogoutUsecase(sl<AuthRepo>()),
+  );
+
+  // Cubits
+  sl.registerFactory<AuthCubit>(
+    () => AuthCubit(
+      loginUsecase: sl<LoginUsecase>(),
+      registerUsecase: sl<RegisterUsecase>(),
+      updateProfileMetricsUsecase: sl<UpdateProfileMetricsUsecase>(),
+      logoutUsecase: sl<LogoutUsecase>(),
+    ),
   );
 }
