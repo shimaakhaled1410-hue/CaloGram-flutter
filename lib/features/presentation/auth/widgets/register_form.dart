@@ -1,10 +1,15 @@
-import 'package:calogram_flutter/core/router/app_routes.dart';
-import 'package:calogram_flutter/utils/app_regex.dart';
+import 'package:calogram_flutter/core/widgets/custom_snack_bar.dart';
+import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
+import 'package:calogram_flutter/features/presentation/manager/auth/auth_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/custom_gradient_button.dart';
-import '../../../../../core/widgets/custom_text_form_field.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../utils/app_regex.dart';
+import '../../../../core/widgets/custom_gradient_button.dart';
+import '../../../../core/widgets/custom_text_form_field.dart';
+
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -30,79 +35,105 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          CustomTextFormField(
-            controller: _nameController,
-            hintText: 'Full Name',
-            keyboardType: TextInputType.name,
-            prefixIcon: const Icon(
-              Icons.person_outline_rounded,
-              color: AppColors.textMutedDark,
-            ),
-            validator: (value) {
-              if (value == null || value.trim().length < 3) {
-                return 'Please enter a valid name (min 3 characters)';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          CustomTextFormField(
-            controller: _emailController,
-            hintText: 'Email Address',
-            keyboardType: TextInputType.emailAddress,
-            prefixIcon: const Icon(
-              Icons.email_outlined,
-              color: AppColors.textMutedDark,
-            ),
-            validator: (value) {
-              if (value == null || !AppRegex.isEmailValid(value)) {
-                return 'Please enter a valid email address';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          CustomTextFormField(
-            controller: _passwordController,
-            hintText: 'Password (min 8 chars & 1 number)',
-            isObscureText: _isPasswordObscure,
-            prefixIcon: const Icon(
-              Icons.lock_outline_rounded,
-              color: AppColors.textMutedDark,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isPasswordObscure
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined,
-                color: AppColors.textMutedDark,
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is RegisterSuccessState) {
+          CustomSnackBar.showSuccess(
+            context,
+            message: 'Account created successfully!',
+          );
+          context.go(AppRoutes.goalSetupScreen);
+        } else if (state is RegisterErrorState) {
+          CustomSnackBar.showError(
+            context,
+            message: state.errMessage,
+          );
+        }
+      },
+      builder: (context, state) {
+        final bool isLoading = state is RegisterLoadingState;
+
+        return Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              CustomTextFormField(
+                controller: _nameController,
+                hintText: 'Full Name',
+                keyboardType: TextInputType.name,
+                prefixIcon: const Icon(
+                  Icons.person_outline_rounded,
+                  color: AppColors.textMutedDark,
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().length < 3) {
+                    return 'Please enter a valid name (min 3 characters)';
+                  }
+                  return null;
+                },
               ),
-              onPressed: () {
-                setState(() => _isPasswordObscure = !_isPasswordObscure);
-              },
-            ),
-            validator: (value) {
-              if (value == null || !AppRegex.isPasswordValid(value)) {
-                return 'Password must have at least 8 chars, letters and digits';
-              }
-              return null;
-            },
+              const SizedBox(height: 16),
+              CustomTextFormField(
+                controller: _emailController,
+                hintText: 'Email Address',
+                keyboardType: TextInputType.emailAddress,
+                prefixIcon: const Icon(
+                  Icons.email_outlined,
+                  color: AppColors.textMutedDark,
+                ),
+                validator: (value) {
+                  if (value == null || !AppRegex.isEmailValid(value)) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              CustomTextFormField(
+                controller: _passwordController,
+                hintText: 'Password (min 8 chars & 1 number)',
+                isObscureText: _isPasswordObscure,
+                prefixIcon: const Icon(
+                  Icons.lock_outline_rounded,
+                  color: AppColors.textMutedDark,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isPasswordObscure
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: AppColors.textMutedDark,
+                  ),
+                  onPressed: () {
+                    setState(() => _isPasswordObscure = !_isPasswordObscure);
+                  },
+                ),
+                validator: (value) {
+                  if (value == null || !AppRegex.isPasswordValid(value)) {
+                    return 'Password must have at least 8 chars, letters and digits';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 28),
+              CustomGradientButton(
+                text: isLoading ? 'Creating Account...' : 'Create Account',
+                onPressed: isLoading
+                    ? () {}
+                    : () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<AuthCubit>().register(
+                                name: _nameController.text,
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                              );
+                        }
+                      },
+              ),
+            ],
           ),
-          const SizedBox(height: 28),
-          CustomGradientButton(
-            text: 'Create Account',
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                context.go(AppRoutes.goalSetupScreen);
-              }
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
