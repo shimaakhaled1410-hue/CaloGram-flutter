@@ -49,6 +49,8 @@ dependencies:
   http: ^1.6.0
   flutter_dotenv: ^6.0.1
   image_picker: ^1.2.3
+  speech_to_text: ^7.4.0
+  permission_handler: ^13.0.1
 
 dev_dependencies:
   flutter_test:

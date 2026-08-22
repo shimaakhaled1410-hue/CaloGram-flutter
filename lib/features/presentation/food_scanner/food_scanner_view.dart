@@ -30,7 +30,7 @@ class _FoodScannerContent extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('AI Food Scanner 📸', style: AppTextStyles.font20BoldWhite),
+        title: Text('AI Food Scanner', style: AppTextStyles.font20BoldWhite),
         centerTitle: true,
       ),
       body: BlocConsumer<FoodScannerCubit, FoodScannerState>(
