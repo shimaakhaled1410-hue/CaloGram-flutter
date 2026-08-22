@@ -3,7 +3,22 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 
 class MacroNutrientsRow extends StatelessWidget {
-  const MacroNutrientsRow({super.key});
+  final int consumedProtein;
+  final int targetProtein;
+  final int consumedCarbs;
+  final int targetCarbs;
+  final int consumedFats;
+  final int targetFats;
+
+  const MacroNutrientsRow({
+    super.key,
+    required this.consumedProtein,
+    required this.targetProtein,
+    required this.consumedCarbs,
+    required this.targetCarbs,
+    required this.consumedFats,
+    required this.targetFats,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,22 +26,22 @@ class MacroNutrientsRow extends StatelessWidget {
       children: [
         _buildMacroCard(
           label: 'Protein',
-          current: '65g',
-          target: '140g',
+          current: '${consumedProtein}g',
+          target: '${targetProtein}g',
           color: Colors.blueAccent,
         ),
         const SizedBox(width: 10),
         _buildMacroCard(
           label: 'Carbs',
-          current: '110g',
-          target: '200g',
+          current: '${consumedCarbs}g',
+          target: '${targetCarbs}g',
           color: Colors.orangeAccent,
         ),
         const SizedBox(width: 10),
         _buildMacroCard(
           label: 'Fats',
-          current: '32g',
-          target: '65g',
+          current: '${consumedFats}g',
+          target: '${targetFats}g',
           color: Colors.purpleAccent,
         ),
       ],
@@ -45,10 +60,7 @@ class MacroNutrientsRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardDark,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.inputBorderDark,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.inputBorderDark, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +71,9 @@ class MacroNutrientsRow extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   label,
-                  style: AppTextStyles.font14RegularMuted.copyWith(fontSize: 12),
+                  style: AppTextStyles.font14RegularMuted.copyWith(
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),

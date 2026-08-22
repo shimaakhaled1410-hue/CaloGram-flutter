@@ -15,17 +15,16 @@ class CalorieProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int remaining = targetCalories - consumedCalories;
-    final double progress = (consumedCalories / targetCalories).clamp(0.0, 1.0);
+    final double progress = targetCalories > 0
+        ? (consumedCalories / targetCalories).clamp(0.0, 1.0)
+        : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.cardDark,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.inputBorderDark,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.inputBorderDark, width: 1),
       ),
       child: Row(
         children: [
@@ -33,22 +32,16 @@ class CalorieProgressCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Daily Calories',
-                  style: AppTextStyles.font14RegularMuted,
-                ),
+                Text('Daily Calories', style: AppTextStyles.font14RegularMuted),
                 const SizedBox(height: 6),
                 Text(
-                  '$remaining',
+                  '${remaining < 0 ? 0 : remaining}',
                   style: AppTextStyles.font28BoldWhite.copyWith(
                     color: AppColors.primaryNeonLime,
                     fontSize: 32,
                   ),
                 ),
-                Text(
-                  'kcal remaining',
-                  style: AppTextStyles.font14MediumWhite,
-                ),
+                Text('kcal remaining', style: AppTextStyles.font14MediumWhite),
               ],
             ),
           ),
