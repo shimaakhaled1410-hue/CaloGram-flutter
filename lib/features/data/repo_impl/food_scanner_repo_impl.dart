@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:calogram_flutter/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../domain/entities/scanned_food_entity.dart';
 import '../../domain/repo/food_scanner_repo.dart';
@@ -13,7 +13,7 @@ class FoodScannerRepoImpl implements FoodScannerRepo {
 
   @override
   Future<Either<Failure, ScannedFoodEntity>> analyzeFoodImage(
-    File imageFile,
+    XFile imageFile,
   ) async {
     try {
       final result = await remoteDataSource.analyzeFoodImage(imageFile);
