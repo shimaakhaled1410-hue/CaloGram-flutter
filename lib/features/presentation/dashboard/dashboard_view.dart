@@ -1,4 +1,5 @@
 import 'package:calogram_flutter/features/presentation/food_scanner/food_scanner_view.dart';
+import 'package:calogram_flutter/features/presentation/voice_logger/voice_logger_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/services/service_locator.dart';
@@ -18,9 +19,13 @@ class _DashboardViewState extends State<DashboardView> {
 
   final List<Widget> _tabs = const [
     TodayTabView(),
-    Center(child: Text('Fridge & AI Chef', style: TextStyle(color: Colors.white))),
-    Center(child: Text('Voice Logger', style: TextStyle(color: Colors.white))),
-    Center(child: Text('Profile & Settings', style: TextStyle(color: Colors.white))),
+    Center(
+      child: Text('Fridge & AI Chef', style: TextStyle(color: Colors.white)),
+    ),
+    VoiceLoggerView(),
+    Center(
+      child: Text('Profile & Settings', style: TextStyle(color: Colors.white)),
+    ),
     FoodScannerView(),
   ];
 
@@ -36,14 +41,14 @@ class _DashboardViewState extends State<DashboardView> {
               selectedIndex: _currentIndex,
               onItemTapped: (index) {
                 setState(() => _currentIndex = index);
-                
+
                 if (index == 0) {
                   context.read<DashboardCubit>().getDashboardData();
                 }
               },
             ),
           );
-        }
+        },
       ),
     );
   }
