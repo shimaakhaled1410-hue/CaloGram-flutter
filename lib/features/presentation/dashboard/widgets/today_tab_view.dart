@@ -94,17 +94,20 @@ class TodayTabView extends StatelessWidget {
                     if (state.meals.isEmpty)
                       _buildEmptyState()
                     else
-                      ...state.meals.map(
-                        (meal) => Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: _buildMealItem(
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: state.meals.length,
+                        separatorBuilder: (context, index) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final meal = state.meals[index];
+                          return _buildMealItem(
                             title: meal.title,
-                            details:
-                                'P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g',
+                            details: 'P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g',
                             calories: '${meal.calories} kcal',
                             icon: Icons.restaurant_rounded,
-                          ),
-                        ),
+                          );
+                        },
                       ),
                   ],
                 ),
