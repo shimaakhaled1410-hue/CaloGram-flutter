@@ -21,6 +21,7 @@ import 'package:calogram_flutter/features/domain/usecases/voice_logger/analyze_v
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/dashboard/dashboard_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/food_scanner/food_scanner_cubit.dart';
+import 'package:calogram_flutter/features/presentation/manager/voice_logger/voice_logger_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -126,4 +127,6 @@ void setupServiceLocator() {
       () => VoiceLoggerRepoImpl(remoteDataSource: sl()));
 
   sl.registerLazySingleton(() => AnalyzeVoiceLogUsecase(sl()));
+
+  sl.registerFactory(() => VoiceLoggerCubit(analyzeVoiceLogUsecase: sl(), logMealUsecase: sl()));
 }

@@ -13,17 +13,15 @@ class ScannedFoodModel extends ScannedFoodEntity {
 
   factory ScannedFoodModel.fromJson(Map<String, dynamic> json) {
     return ScannedFoodModel(
-      foodName: json['foodName'] as String? ?? 'Custom Meal',
-      calories: json['calories'] as int? ?? 0,
-      protein: json['protein'] as int? ?? 0,
-      carbs: json['carbs'] as int? ?? 0,
-      fats: json['fats'] as int? ?? 0,
-      confidenceScore: json['confidenceScore'] as String? ?? '95%',
-      detectedIngredients:
-          (json['detectedIngredients'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
+      foodName: json['foodName'] ?? '',
+      calories: (json['calories'] as num?)?.toInt() ?? 0,
+      protein: (json['protein'] as num?)?.toInt() ?? 0,
+      carbs: (json['carbs'] as num?)?.toInt() ?? 0,
+      fats: (json['fats'] as num?)?.toInt() ?? 0,
+      confidenceScore: json['confidenceScore']?.toString() ?? '0%',
+      detectedIngredients: json['detectedIngredients'] != null
+          ? List<String>.from(json['detectedIngredients'])
+          : [],
     );
   }
 
