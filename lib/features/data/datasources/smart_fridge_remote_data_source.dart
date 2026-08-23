@@ -15,30 +15,36 @@ class SmartFridgeRemoteDataSourceImpl implements SmartFridgeRemoteDataSource {
   Future<List<RecipeModel>> generateRecipes(List<String> ingredients) async {
     try {
       if (_groqApiKey.isEmpty) {
-        throw ServerException('Groq API Key is missing in .env');
+        throw ServerException('Fridge Groq API Key is missing in .env');
       }
 
       final uri = Uri.parse('https://api.groq.com/openai/v1/chat/completions');
 
-      const systemPrompt = '''
-You are a professional chef and sports nutritionist.
-Given a list of available ingredients, suggest 2 to 3 healthy recipes.
-Output ONLY a raw valid JSON array without markdown formatting or backticks.
-Format:
-[
-  {
-    "title": "Meal Title",
-    "description": "Brief description",
-    "calories": 350,
-    "protein": 30,
-    "carbs": 25,
-    "fats": 10,
-    "cookingTimeMinutes": 20,
-    "usedIngredients": ["egg", "spinach"],
-    "missingIngredients": ["olive oil"],
-    "instructions": ["Step 1", "Step 2"]
-  }
-]
+      final prompt =
+          '''
+Role: Nutritionist Chef.
+Available: ${ingredients.join(', ')}
+
+Rules:
+1. Suggest exactly 2 realistic healthy meals.
+2. Exclude soft drinks/sodas from cooking.
+3. Return ONLY valid JSON matching this schema:
+{
+  "recipes": [
+    {
+      "title": "Title",
+      "description": "Short description",
+      "calories": 300,
+      "protein": 20,
+      "carbs": 25,
+      "fats": 10,
+      "cookingTimeMinutes": 15,
+      "usedIngredients": ["item1"],
+      "missingIngredients": ["item2"],
+      "instructions": ["Step 1", "Step 2"]
+    }
+  ]
+}
 ''';
 
       final response = await http.post(
@@ -50,23 +56,39 @@ Format:
         body: jsonEncode({
           "model": "openai/gpt-oss-20b",
           "messages": [
-            {"role": "system", "content": systemPrompt},
-            {"role": "user", "content": "Ingredients available: ${ingredients.join(', ')}"}
+            {"role": "user", "content": prompt},
           ],
-          "temperature": 0.3,
+          "temperature": 0.2,
+          "reasoning_effort": "low",
+          "max_completion_tokens": 1000,
         }),
       );
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-        String rawContent = decoded['choices'][0]['message']['content'] as String;
-        
-        rawContent = rawContent.replaceAll('```json', '').replaceAll('```', '').trim();
+        String rawContent =
+            decoded['choices'][0]['message']['content'] as String;
 
-        final List<dynamic> jsonList = jsonDecode(rawContent);
-        return jsonList.map((item) => RecipeModel.fromJson(item as Map<String, dynamic>)).toList();
+        rawContent = rawContent
+            .replaceAll('```json', '')
+            .replaceAll('```', '')
+            .trim();
+        final int startIndex = rawContent.indexOf('{');
+        final int endIndex = rawContent.lastIndexOf('}');
+        if (startIndex != -1 && endIndex != -1 && endIndex >= startIndex) {
+          rawContent = rawContent.substring(startIndex, endIndex + 1);
+        }
+
+        final Map<String, dynamic> jsonResponse = jsonDecode(rawContent);
+        final List<dynamic> recipesList = jsonResponse['recipes'] ?? [];
+
+        return recipesList
+            .map((item) => RecipeModel.fromJson(item as Map<String, dynamic>))
+            .toList();
       } else {
-        throw ServerException('Groq API error: ${response.statusCode} - ${response.body}');
+        throw ServerException(
+          'Groq API error: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       if (e is ServerException) rethrow;
