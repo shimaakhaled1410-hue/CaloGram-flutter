@@ -1,14 +1,17 @@
 import 'package:calogram_flutter/features/data/datasources/auth_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/dashboard_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/food_scanner_remote_data_source.dart';
+import 'package:calogram_flutter/features/data/datasources/smart_fridge_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/voice_logger_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/repo_impl/auth_repo_impl.dart';
 import 'package:calogram_flutter/features/data/repo_impl/dashboard_repo_impl.dart';
 import 'package:calogram_flutter/features/data/repo_impl/food_scanner_repo_impl.dart';
+import 'package:calogram_flutter/features/data/repo_impl/smart_fridge_repo_impl.dart';
 import 'package:calogram_flutter/features/data/repo_impl/voice_logger_repo_impl.dart';
 import 'package:calogram_flutter/features/domain/repo/auth_repo.dart';
 import 'package:calogram_flutter/features/domain/repo/dashboard_repo.dart';
 import 'package:calogram_flutter/features/domain/repo/food_scanner_repo.dart';
+import 'package:calogram_flutter/features/domain/repo/smart_fridge_repo.dart';
 import 'package:calogram_flutter/features/domain/repo/voice_logger_repo.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/login_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/logout_usecase.dart';
@@ -17,6 +20,7 @@ import 'package:calogram_flutter/features/domain/usecases/auth/update_profile_me
 import 'package:calogram_flutter/features/domain/usecases/dashboard/get_dashboard_data_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/log_meal_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/food_scanner/analyze_food_image_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/fridge/generate_recipes_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/voice_logger/analyze_voice_log_usecase.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/dashboard/dashboard_cubit.dart';
@@ -119,14 +123,30 @@ void setupServiceLocator() {
   );
 
   /// voice logger ///
-  
+
   sl.registerLazySingleton<VoiceLoggerRemoteDataSource>(
-      () => VoiceLoggerRemoteDataSourceImpl());
+    () => VoiceLoggerRemoteDataSourceImpl(),
+  );
 
   sl.registerLazySingleton<VoiceLoggerRepo>(
-      () => VoiceLoggerRepoImpl(remoteDataSource: sl()));
+    () => VoiceLoggerRepoImpl(remoteDataSource: sl()),
+  );
 
   sl.registerLazySingleton(() => AnalyzeVoiceLogUsecase(sl()));
 
-  sl.registerFactory(() => VoiceLoggerCubit(analyzeVoiceLogUsecase: sl(), logMealUsecase: sl()));
+  sl.registerFactory(
+    () => VoiceLoggerCubit(analyzeVoiceLogUsecase: sl(), logMealUsecase: sl()),
+  );
+
+  /// smart fridge ///
+
+  sl.registerLazySingleton<SmartFridgeRemoteDataSource>(
+    () => SmartFridgeRemoteDataSourceImpl(),
+  );
+
+  sl.registerLazySingleton<SmartFridgeRepo>(
+    () => SmartFridgeRepoImpl(remoteDataSource: sl()),
+  );
+
+  sl.registerLazySingleton(() => GenerateRecipesUseCase(sl()));
 }

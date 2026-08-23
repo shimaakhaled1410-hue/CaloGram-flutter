@@ -9,7 +9,7 @@ abstract class VoiceLoggerRemoteDataSource {
 }
 
 class VoiceLoggerRemoteDataSourceImpl implements VoiceLoggerRemoteDataSource {
-  static String get _groqApiKey => dotenv.env['GROQ_API_KEY'] ?? '';
+  static String get _groqApiKey => dotenv.env['GROQ_VOICE_API_KEY'] ?? '';
 
   @override
   Future<ScannedFoodModel> analyzeVoiceLog(String transcribedText) async {

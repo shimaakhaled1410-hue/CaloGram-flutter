@@ -108,7 +108,7 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Personalize Your Plan 🎯',
+                    'Personalize Your Plan',
                     style: AppTextStyles.font24BoldWhite,
                   ),
                   const SizedBox(height: 6),
