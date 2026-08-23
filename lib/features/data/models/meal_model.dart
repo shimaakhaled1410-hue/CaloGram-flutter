@@ -14,19 +14,31 @@ class MealModel extends MealEntity {
   });
 
   factory MealModel.fromJson(Map<String, dynamic> json, String id) {
+    DateTime parsedDate;
+    final loggedAtRaw = json['loggedAt'];
+
+    if (loggedAtRaw is Timestamp) {
+      parsedDate = loggedAtRaw.toDate();
+    } else if (loggedAtRaw is String) {
+      parsedDate = DateTime.tryParse(loggedAtRaw) ?? DateTime.now();
+    } else {
+      parsedDate = DateTime.now();
+    }
+
     return MealModel(
-      id: id,
+      id: id.isNotEmpty ? id : (json['id'] as String? ?? ''),
       title: json['title'] as String? ?? '',
       mealType: json['mealType'] as String? ?? 'snack',
-      calories: json['calories'] as int? ?? 0,
-      protein: json['protein'] as int? ?? 0,
-      carbs: json['carbs'] as int? ?? 0,
-      fats: json['fats'] as int? ?? 0,
-      loggedAt: (json['loggedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      calories: (json['calories'] as num?)?.toInt() ?? 0,
+      protein: (json['protein'] as num?)?.toInt() ?? 0,
+      carbs: (json['carbs'] as num?)?.toInt() ?? 0,
+      fats: (json['fats'] as num?)?.toInt() ?? 0,
+      loggedAt: parsedDate,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  /// للـ Firestore Remote
+  Map<String, dynamic> toFirestoreJson() {
     return {
       'title': title,
       'mealType': mealType,
@@ -35,6 +47,20 @@ class MealModel extends MealEntity {
       'carbs': carbs,
       'fats': fats,
       'loggedAt': Timestamp.fromDate(loggedAt),
+    };
+  }
+
+  /// للـ Local Cache
+  Map<String, dynamic> toLocalJson() {
+    return {
+      'id': id,
+      'title': title,
+      'mealType': mealType,
+      'calories': calories,
+      'protein': protein,
+      'carbs': carbs,
+      'fats': fats,
+      'loggedAt': loggedAt.toIso8601String(),
     };
   }
 }

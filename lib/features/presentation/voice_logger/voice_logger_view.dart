@@ -7,8 +7,7 @@ import '../../../../core/services/service_locator.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import 'widgets/parsed_food_card.dart';
 import 'widgets/voice_confirm_button.dart';
-import 'widgets/voice_mic_button.dart';
-import 'widgets/voice_text_display_area.dart';
+import 'widgets/voice_input_input_field.dart';
 
 class VoiceLoggerView extends StatelessWidget {
   const VoiceLoggerView({super.key});
@@ -35,7 +34,7 @@ class _VoiceLoggerContent extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Voice Logger',
+          'Smart Food Logger',
           style: AppTextStyles.font20BoldWhite.copyWith(
             color: theme.colorScheme.onSurface,
           ),
@@ -55,22 +54,35 @@ class _VoiceLoggerContent extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Spacer(),
-                VoiceTextDisplayArea(state: state),
-                const SizedBox(height: 40),
-                if (state is VoiceLoggerSuccess)
-                  ParsedFoodCard(food: state.food),
-                if (state is VoiceLoggerSuccess) const SizedBox(height: 24),
-                if (state is VoiceLoggerSuccess)
-                  VoiceConfirmButton(state: state),
-                const Spacer(),
-                if (state is! VoiceLoggerSuccess) VoiceMicButton(state: state),
-                const SizedBox(height: 40),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: state is VoiceLoggerSuccess
+                      ? Column(
+                          key: const ValueKey('success_card'),
+                          children: [
+                            ParsedFoodCard(food: state.food),
+                            const SizedBox(height: 24),
+                            VoiceConfirmButton(state: state),
+                            const SizedBox(height: 16),
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () =>
+                                    context.read<VoiceLoggerCubit>().reset(),
+                                icon: const Icon(Icons.refresh_rounded, size: 18),
+                                label: const Text('Log another meal'),
+                              ),
+                            ),
+                          ],
+                        )
+                      : const VoiceInputInputField(
+                          key: ValueKey('input_area'),
+                        ),
+                ),
               ],
             ),
           );

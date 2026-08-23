@@ -53,16 +53,21 @@ class VoiceLoggerCubit extends Cubit<VoiceLoggerState> {
     }
   }
 
-  Future<void> _processVoiceCommand() async {
-    if (_currentWords.isEmpty) return;
+  Future<void> analyzeText(String text) async {
+    if (text.trim().isEmpty) return;
 
     emit(VoiceLoggerAnalyzing());
-    final result = await analyzeVoiceLogUsecase(_currentWords);
+    final result = await analyzeVoiceLogUsecase(text);
 
     result.fold(
       (failure) => emit(VoiceLoggerError(failure.errMessage)),
       (food) => emit(VoiceLoggerSuccess(food)),
     );
+  }
+
+  Future<void> _processVoiceCommand() async {
+    if (_currentWords.isEmpty) return;
+    await analyzeText(_currentWords);
   }
 
   Future<void> saveVoiceMeal({

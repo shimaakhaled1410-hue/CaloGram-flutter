@@ -82,24 +82,19 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     }
   }
 
-  @override
+ @override
   Future<void> cacheMeals(List<MealModel> meals) async {
     try {
-      final list = meals.map((m) {
-        final map = m.toJson();
-        map['id'] = m.id;
-        return map;
-      }).toList();
+      final list = meals.map((m) => m.toLocalJson()).toList();
 
       await CacheHelper.setString(
         key: AppConstants.cachedTodayMeals,
         value: jsonEncode(list),
       );
-    } catch (_) {
-      throw CacheException('Failed to cache meals');
+    } catch (e) {
+      throw CacheException('Failed to cache meals: $e');
     }
   }
-
   @override
   Future<void> addMealToCache(MealModel meal) async {
     final currentMeals = await getCachedMeals();

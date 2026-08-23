@@ -78,31 +78,36 @@ class DashboardRepoImpl implements DashboardRepo {
     }
   }
 
-  @override
-  Future<Either<Failure, void>> logMeal(MealEntity meal) async {
-    try {
-      final uid = _getUid();
-      final mealModel = MealModel(
-        id: meal.id,
-        title: meal.title,
-        mealType: meal.mealType,
-        calories: meal.calories,
-        protein: meal.protein,
-        carbs: meal.carbs,
-        fats: meal.fats,
-        loggedAt: meal.loggedAt,
-      );
-      await remoteDataSource.logMeal(uid, mealModel);
-      await localDataSource.addMealToCache(mealModel);
-      return const Right(null);
-    } on AuthException catch (e) {
-      return Left(AuthFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (_) {
-      return Left(ServerFailure('Failed to log meal'));
-    }
+ @override
+Future<Either<Failure, void>> logMeal(MealEntity meal) async {
+  try {
+    final uid = _getUid();
+    final mealModel = MealModel(
+      id: meal.id,
+      title: meal.title,
+      mealType: meal.mealType,
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fats: meal.fats,
+      loggedAt: meal.loggedAt,
+    );
+    await remoteDataSource.logMeal(uid, mealModel);
+    await localDataSource.addMealToCache(mealModel);
+    return const Right(null);
+  } on AuthException catch (e) {
+    print('🛑 Auth Exception in logMeal: ${e.message}');
+    return Left(AuthFailure(e.message));
+  } on ServerException catch (e) {
+    print('🛑 Server Exception in logMeal: ${e.message}');
+    return Left(ServerFailure(e.message));
+  } on NetworkException catch (e) {
+    print('🛑 Network Exception in logMeal: ${e.message}');
+    return Left(NetworkFailure(e.message));
+  } catch (e, stackTrace) {
+    print('🛑 Unhandled Exception in logMeal: $e');
+    print('🛑 StackTrace: $stackTrace');
+    return Left(ServerFailure(e.toString()));
   }
+}
 }

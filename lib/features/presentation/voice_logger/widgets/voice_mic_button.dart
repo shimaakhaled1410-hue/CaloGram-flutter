@@ -11,8 +11,9 @@ class VoiceMicButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onAccentColor =
-        isDark ? AppColors.backgroundDark : AppColors.textMainLight;
+    final onAccentColor = isDark
+        ? AppColors.backgroundDark
+        : AppColors.textMainLight;
 
     final isListening = state is VoiceLoggerListening;
     final isAnalyzing =
@@ -27,8 +28,8 @@ class VoiceMicButton extends StatelessWidget {
             },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        height: isListening ? 90 : 75,
-        width: isListening ? 90 : 75,
+        height: isListening ? 85 : 72,
+        width: isListening ? 85 : 72,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: isAnalyzing ? null : AppColors.primaryLimeGradient,
@@ -41,8 +42,8 @@ class VoiceMicButton extends StatelessWidget {
                 color: AppColors.primaryNeonLime.withValues(
                   alpha: isDark ? 0.6 : 0.4,
                 ),
-                blurRadius: 30,
-                spreadRadius: 10,
+                blurRadius: 28,
+                spreadRadius: 8,
               )
             else if (!isAnalyzing)
               BoxShadow(
@@ -54,7 +55,7 @@ class VoiceMicButton extends StatelessWidget {
         ),
         child: isAnalyzing
             ? Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(22.0),
                 child: CircularProgressIndicator(
                   color: isDark ? Colors.white54 : Colors.black45,
                   strokeWidth: 3,
@@ -62,7 +63,7 @@ class VoiceMicButton extends StatelessWidget {
               )
             : Icon(
                 isListening ? Icons.mic : Icons.mic_none,
-                size: 38,
+                size: 34,
                 color: onAccentColor,
               ),
       ),

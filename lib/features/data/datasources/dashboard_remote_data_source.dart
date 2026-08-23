@@ -61,14 +61,14 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     }
   }
 
-  @override
+ @override
   Future<void> logMeal(String uId, MealModel meal) async {
     try {
       await firestore
           .collection('users')
           .doc(uId)
           .collection('meals')
-          .add(meal.toJson());
+          .add(meal.toFirestoreJson());
     } on SocketException {
       throw NetworkException('No internet connection');
     } catch (_) {
