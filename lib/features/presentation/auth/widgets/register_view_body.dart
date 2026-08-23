@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import 'register_form.dart';
 import 'terms_and_conditions_text.dart';
@@ -9,6 +10,9 @@ class RegisterViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return SafeArea(
       child: Center(
         child: SingleChildScrollView(
@@ -19,13 +23,19 @@ class RegisterViewBody extends StatelessWidget {
               Center(
                 child: Text(
                   'Create Account',
-                  style: AppTextStyles.font28BoldWhite,
+                  style: AppTextStyles.font28BoldWhite.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Start your smart AI nutrition journey today.',
-                style: AppTextStyles.font14RegularMuted,
+                style: AppTextStyles.font14RegularMuted.copyWith(
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
+                ),
               ),
               const SizedBox(height: 32),
               const RegisterForm(),
@@ -37,13 +47,21 @@ class RegisterViewBody extends StatelessWidget {
                 children: [
                   Text(
                     'Already have an account? ',
-                    style: AppTextStyles.font14RegularMuted,
+                    style: AppTextStyles.font14RegularMuted.copyWith(
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => GoRouter.of(context).pop(),
                     child: Text(
                       'Log In',
-                      style: AppTextStyles.font14SemiBoldLime,
+                      style: AppTextStyles.font14SemiBoldLime.copyWith(
+                        color: isDark
+                            ? AppColors.primaryNeonLime
+                            : AppColors.primaryLimeDark,
+                      ),
                     ),
                   ),
                 ],

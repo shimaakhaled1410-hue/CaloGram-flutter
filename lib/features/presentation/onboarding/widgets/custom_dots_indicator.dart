@@ -13,6 +13,8 @@ class CustomDotsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
@@ -24,8 +26,12 @@ class CustomDotsIndicator extends StatelessWidget {
           width: currentIndex == index ? 24 : 8,
           decoration: BoxDecoration(
             color: currentIndex == index
-                ? AppColors.primaryNeonLime
-                : AppColors.inputBorderDark,
+                ? (isDark
+                      ? AppColors.primaryNeonLime
+                      : AppColors.primaryLimeDark)
+                : (isDark
+                      ? AppColors.inputBorderDark
+                      : AppColors.inputBorderLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),

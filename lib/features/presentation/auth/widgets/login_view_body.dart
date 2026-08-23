@@ -13,7 +13,6 @@ import '../../../../utils/app_regex.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_text_form_field.dart';
 
-
 class LoginViewBody extends StatefulWidget {
   const LoginViewBody({super.key});
 
@@ -42,6 +41,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccessState) {
@@ -51,10 +53,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
           );
           context.go(AppRoutes.dashboardScreen);
         } else if (state is LoginErrorState) {
-          CustomSnackBar.showError(
-            context,
-            message: state.errMessage,
-          );
+          CustomSnackBar.showError(context, message: state.errMessage);
         }
       },
       builder: (context, state) {
@@ -78,7 +77,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryNeonLime.withValues(alpha: 0.3),
+                              color: AppColors.primaryNeonLime.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 20,
                               offset: const Offset(0, 6),
                             ),
@@ -94,21 +95,29 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                     const SizedBox(height: 32),
                     Text(
                       'Welcome Back!',
-                      style: AppTextStyles.font28BoldWhite,
+                      style: AppTextStyles.font28BoldWhite.copyWith(
+                        color: theme.colorScheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Track calories, scan meals & achieve your goals.',
-                      style: AppTextStyles.font14RegularMuted,
+                      style: AppTextStyles.font14RegularMuted.copyWith(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
+                      ),
                     ),
                     const SizedBox(height: 32),
                     CustomTextFormField(
                       controller: _emailController,
                       hintText: 'Email Address',
                       keyboardType: TextInputType.emailAddress,
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.email_outlined,
-                        color: AppColors.textMutedDark,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMutedLight,
                       ),
                       validator: (value) {
                         if (value == null || !AppRegex.isEmailValid(value)) {
@@ -122,19 +131,25 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                       controller: _passwordController,
                       hintText: 'Password',
                       isObscureText: _isPasswordObscure,
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.lock_outline_rounded,
-                        color: AppColors.textMutedDark,
+                        color: isDark
+                            ? AppColors.textMutedDark
+                            : AppColors.textMutedLight,
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isPasswordObscure
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: AppColors.textMutedDark,
+                          color: isDark
+                              ? AppColors.textMutedDark
+                              : AppColors.textMutedLight,
                         ),
                         onPressed: () {
-                          setState(() => _isPasswordObscure = !_isPasswordObscure);
+                          setState(
+                            () => _isPasswordObscure = !_isPasswordObscure,
+                          );
                         },
                       ),
                       validator: (value) {
@@ -151,7 +166,11 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                         onPressed: () {},
                         child: Text(
                           'Forgot Password?',
-                          style: AppTextStyles.font14SemiBoldLime,
+                          style: AppTextStyles.font14SemiBoldLime.copyWith(
+                            color: isDark
+                                ? AppColors.primaryNeonLime
+                                : AppColors.primaryLimeDark,
+                          ),
                         ),
                       ),
                     ),
@@ -163,9 +182,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                           : () {
                               if (_formKey.currentState!.validate()) {
                                 context.read<AuthCubit>().login(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                    );
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                );
                               }
                             },
                     ),
@@ -176,8 +195,10 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                       child: OutlinedButton(
                         onPressed: isLoading ? null : _continueAsGuest,
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppColors.inputBorderDark,
+                          side: BorderSide(
+                            color: isDark
+                                ? AppColors.inputBorderDark
+                                : AppColors.inputBorderLight,
                             width: 1.2,
                           ),
                           shape: RoundedRectangleBorder(
@@ -186,7 +207,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                         ),
                         child: Text(
                           'Continue as Guest',
-                          style: AppTextStyles.font14MediumWhite,
+                          style: AppTextStyles.font14MediumWhite.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
@@ -196,7 +219,11 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                       children: [
                         Text(
                           'Don\'t have an account? ',
-                          style: AppTextStyles.font14RegularMuted,
+                          style: AppTextStyles.font14RegularMuted.copyWith(
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -204,7 +231,11 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                           },
                           child: Text(
                             'Sign Up',
-                            style: AppTextStyles.font14SemiBoldLime,
+                            style: AppTextStyles.font14SemiBoldLime.copyWith(
+                              color: isDark
+                                  ? AppColors.primaryNeonLime
+                                  : AppColors.primaryLimeDark,
+                            ),
                           ),
                         ),
                       ],

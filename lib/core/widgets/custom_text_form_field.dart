@@ -24,19 +24,28 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryAccent =
+        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+
     return TextFormField(
       controller: controller,
       obscureText: isObscureText,
       keyboardType: keyboardType,
       validator: validator,
-      style: AppTextStyles.font14MediumWhite,
-      cursorColor: AppColors.primaryNeonLime,
+      style: AppTextStyles.font14MediumWhite.copyWith(
+        color: theme.colorScheme.onSurface,
+      ),
+      cursorColor: primaryAccent,
       decoration: InputDecoration(
         isDense: true,
         filled: true,
-        fillColor: AppColors.cardDark,
+        fillColor: theme.colorScheme.surface,
         hintText: hintText,
-        hintStyle: AppTextStyles.font14RegularMuted,
+        hintStyle: AppTextStyles.font14RegularMuted.copyWith(
+          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+        ),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         contentPadding: const EdgeInsets.symmetric(
@@ -45,15 +54,17 @@ class CustomTextFormField extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: AppColors.inputBorderDark,
+          borderSide: BorderSide(
+            color: isDark
+                ? AppColors.inputBorderDark
+                : AppColors.inputBorderLight,
             width: 1.2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: AppColors.primaryNeonLime,
+          borderSide: BorderSide(
+            color: primaryAccent,
             width: 1.5,
           ),
         ),

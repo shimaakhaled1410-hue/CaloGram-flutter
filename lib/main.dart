@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:calogram_flutter/core/router/app_router.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
+import 'package:calogram_flutter/features/presentation/manager/theme/theme_cubit.dart';
 import 'package:calogram_flutter/firebase_options.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -39,17 +40,24 @@ class CaloGramApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<AuthCubit>(),
-      child: MaterialApp.router(
-        title: 'CaloGram',
-        debugShowCheckedModeBanner: false,
-        locale: enableDevicePreview ? DevicePreview.locale(context) : null,
-        builder: enableDevicePreview ? DevicePreview.appBuilder : null,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.dark,
-        routerConfig: AppRouter.router,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<AuthCubit>()),
+        BlocProvider(create: (context) => sl<ThemeCubit>()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp.router(
+            title: 'CaloGram',
+            debugShowCheckedModeBanner: false,
+            locale: enableDevicePreview ? DevicePreview.locale(context) : null,
+            builder: enableDevicePreview ? DevicePreview.appBuilder : null,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            routerConfig: AppRouter.router,
+          );
+        },
       ),
     );
   }

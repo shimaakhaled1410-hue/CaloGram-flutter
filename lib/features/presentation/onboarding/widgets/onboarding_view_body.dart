@@ -58,6 +58,8 @@ class _OnboardingViewBodyState extends State<OnboardingViewBody> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final bool isLastPage = _currentIndex == _pages.length - 1;
 
     return SafeArea(
@@ -73,6 +75,9 @@ class _OnboardingViewBodyState extends State<OnboardingViewBody> {
                   'Skip',
                   style: AppTextStyles.font14RegularMuted.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
                   ),
                 ),
               ),
@@ -85,9 +90,8 @@ class _OnboardingViewBodyState extends State<OnboardingViewBody> {
               onPageChanged: (index) {
                 setState(() => _currentIndex = index);
               },
-              itemBuilder: (context, index) => OnboardingPageItem(
-                model: _pages[index],
-              ),
+              itemBuilder: (context, index) =>
+                  OnboardingPageItem(model: _pages[index]),
             ),
           ),
           Padding(
@@ -118,8 +122,9 @@ class _OnboardingViewBodyState extends State<OnboardingViewBody> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              AppColors.primaryNeonLime.withValues(alpha: 0.35),
+                          color: AppColors.primaryNeonLime.withValues(
+                            alpha: 0.35,
+                          ),
                           blurRadius: 15,
                           offset: const Offset(0, 4),
                         ),

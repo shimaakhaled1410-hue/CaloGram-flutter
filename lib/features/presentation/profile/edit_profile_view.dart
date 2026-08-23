@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/widgets/custom_gradient_button.dart';
 import 'package:calogram_flutter/features/domain/entities/user_profile.dart';
 import 'package:calogram_flutter/features/presentation/manager/profile/profile_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/profile/profile_state.dart';
@@ -83,6 +84,12 @@ class _EditProfileContentState extends State<EditProfileContent> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
+
     return BlocConsumer<ProfileCubit, ProfileState>(
       listener: (context, state) {
         if (state is ProfileUpdatedSuccess) {
@@ -100,21 +107,23 @@ class _EditProfileContentState extends State<EditProfileContent> {
         final isLoading = state is ProfileUpdating;
 
         return Scaffold(
-          backgroundColor: AppColors.backgroundDark,
+          backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
+                color: theme.colorScheme.onSurface,
                 size: 20,
               ),
               onPressed: () => context.pop(),
             ),
             title: Text(
               'Edit Goals & Metrics',
-              style: AppTextStyles.font20BoldWhite,
+              style: AppTextStyles.font20BoldWhite.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
             centerTitle: true,
           ),
@@ -134,21 +143,23 @@ class _EditProfileContentState extends State<EditProfileContent> {
                   const SizedBox(height: 18),
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.primaryNeonLime),
+                      side: BorderSide(color: primaryAccent),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       minimumSize: const Size(double.infinity, 46),
                     ),
                     onPressed: _autoCalculateNutrition,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.auto_awesome,
-                      color: AppColors.primaryNeonLime,
+                      color: primaryAccent,
                       size: 18,
                     ),
                     label: Text(
                       'Auto-Calculate Targets with AI',
-                      style: AppTextStyles.font14SemiBoldLime,
+                      style: AppTextStyles.font14SemiBoldLime.copyWith(
+                        color: primaryAccent,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -166,25 +177,10 @@ class _EditProfileContentState extends State<EditProfileContent> {
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryNeonLime,
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                onPressed: isLoading ? null : _saveProfile,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
-                          strokeWidth: 2.5,
-                        ),
-                      )
-                    : Text('Save Changes', style: AppTextStyles.font16BoldDark),
+              child: CustomGradientButton(
+                text: 'Save Changes',
+                isLoading: isLoading,
+                onPressed: isLoading ? () {} : _saveProfile,
               ),
             ),
           ),
@@ -223,7 +219,7 @@ class _EditProfileContentState extends State<EditProfileContent> {
     }
 
     final double bmr = (10 * weight) + (6.25 * height) - (5 * 25) + 5;
-    double tdee = bmr * 1.375; // Moderate active
+    double tdee = bmr * 1.375;
 
     if (targetWeight != null) {
       if (targetWeight < weight) {

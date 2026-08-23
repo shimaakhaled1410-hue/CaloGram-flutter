@@ -29,6 +29,11 @@ class ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryAccent =
+        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LogoutSuccessState) {
@@ -36,19 +41,24 @@ class ProfileContent extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.backgroundDark,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text('My Profile', style: AppTextStyles.font20BoldWhite),
+          title: Text(
+            'My Profile',
+            style: AppTextStyles.font20BoldWhite.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
           centerTitle: true,
         ),
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             if (state is ProfileLoading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  color: AppColors.primaryNeonLime,
+                  color: primaryAccent,
                 ),
               );
             }
@@ -64,7 +74,6 @@ class ProfileContent extends StatelessWidget {
                   vertical: 12,
                 ),
                 children: [
-                  // --- Avatar & User Info ---
                   Center(
                     child: Column(
                       children: [
@@ -73,18 +82,14 @@ class ProfileContent extends StatelessWidget {
                           height: 88,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors.cardDark,
+                            color: theme.colorScheme.surface,
                             border: Border.all(
-                              color: AppColors.primaryNeonLime.withValues(
-                                alpha: 0.6,
-                              ),
+                              color: primaryAccent.withValues(alpha: 0.6),
                               width: 2,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryNeonLime.withValues(
-                                  alpha: 0.2,
-                                ),
+                                color: primaryAccent.withValues(alpha: 0.2),
                                 blurRadius: 16,
                                 offset: const Offset(0, 4),
                               ),
@@ -96,14 +101,16 @@ class ProfileContent extends StatelessWidget {
                                 ? profile.name[0].toUpperCase()
                                 : 'U',
                             style: AppTextStyles.font28BoldWhite.copyWith(
-                              color: AppColors.primaryNeonLime,
+                              color: primaryAccent,
                             ),
                           ),
                         ),
                         const SizedBox(height: 14),
                         Text(
                           profile.name,
-                          style: AppTextStyles.font20BoldWhite,
+                          style: AppTextStyles.font20BoldWhite.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Container(
@@ -112,34 +119,30 @@ class ProfileContent extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.cardDark,
+                            color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: AppColors.primaryNeonLime.withValues(
-                                alpha: 0.3,
-                              ),
+                              color: primaryAccent.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Text(
                             profile.bmiCategory,
-                            style: AppTextStyles.font14SemiBoldLime,
+                            style: AppTextStyles.font14SemiBoldLime.copyWith(
+                              color: primaryAccent,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // --- Profile Metrics Summary Card ---
                   ProfileSummaryCard(profile: profile),
                   const SizedBox(height: 24),
-
-                  // --- Options List ---
                   ProfileMenuItem(
                     icon: Icons.edit_note_rounded,
                     title: 'Edit Personal Data & Goals',
                     subtitle: 'Update weight, macros, and targets',
-                    iconColor: AppColors.primaryNeonLime,
+                    iconColor: primaryAccent,
                     onTap: () async {
                       await context.push(AppRoutes.editProfileScreen);
 
@@ -153,7 +156,7 @@ class ProfileContent extends StatelessWidget {
                     icon: Icons.settings_rounded,
                     title: 'Settings',
                     subtitle: 'Theme and preferences',
-                    iconColor: Colors.white70,
+                    iconColor: isDark ? Colors.white70 : Colors.black54,
                     onTap: () {
                       context.push(AppRoutes.settingsScreen);
                     },
@@ -174,7 +177,11 @@ class ProfileContent extends StatelessWidget {
             return Center(
               child: Text(
                 'Failed to load profile',
-                style: AppTextStyles.font14RegularMuted,
+                style: AppTextStyles.font14RegularMuted.copyWith(
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
+                ),
               ),
             );
           },
@@ -184,20 +191,39 @@ class ProfileContent extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.cardDark,
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        title: Text('Logout', style: AppTextStyles.font18SemiBoldWhite),
+        title: Text(
+          'Logout',
+          style: AppTextStyles.font18SemiBoldWhite.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
         content: Text(
           'Are you sure you want to logout?',
-          style: AppTextStyles.font14RegularMuted,
+          style: AppTextStyles.font14RegularMuted.copyWith(
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: AppTextStyles.font14RegularMuted),
+            child: Text(
+              'Cancel',
+              style: AppTextStyles.font14RegularMuted.copyWith(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+              ),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

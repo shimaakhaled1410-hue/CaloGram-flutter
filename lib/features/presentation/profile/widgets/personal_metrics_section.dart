@@ -1,5 +1,6 @@
 import 'package:calogram_flutter/features/presentation/profile/widgets/profile_text_file.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/app_text_styles.dart';
 
 class PersonalMetricsSection extends StatelessWidget {
   final TextEditingController nameController;
@@ -17,15 +18,15 @@ class PersonalMetricsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Personal Metrics',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+          style: AppTextStyles.font18SemiBoldWhite.copyWith(
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 12),

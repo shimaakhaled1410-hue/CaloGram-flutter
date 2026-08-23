@@ -51,8 +51,9 @@ class _SplashViewBodyState extends State<SplashViewBody>
           CacheHelper.getBool(key: AppConstants.isOnboardingSeen) ?? false;
       final bool isGuest =
           CacheHelper.getBool(key: AppConstants.isGuestUser) ?? false;
-      final String? token =
-          CacheHelper.getString(key: AppConstants.cachedUserToken);
+      final String? token = CacheHelper.getString(
+        key: AppConstants.cachedUserToken,
+      );
 
       if (!isOnboardingSeen) {
         context.go(AppRoutes.onboardingScreen);
@@ -72,6 +73,9 @@ class _SplashViewBodyState extends State<SplashViewBody>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Center(
       child: FadeTransition(
         opacity: _fadeAnimation,
@@ -104,11 +108,18 @@ class _SplashViewBodyState extends State<SplashViewBody>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Calo', style: AppTextStyles.font28BoldWhite),
+                  Text(
+                    'Calo',
+                    style: AppTextStyles.font28BoldWhite.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
                   Text(
                     'Gram',
                     style: AppTextStyles.font28BoldWhite.copyWith(
-                      color: AppColors.primaryNeonLime,
+                      color: isDark
+                          ? AppColors.primaryNeonLime
+                          : AppColors.primaryLimeDark,
                     ),
                   ),
                 ],
@@ -116,7 +127,11 @@ class _SplashViewBodyState extends State<SplashViewBody>
               const SizedBox(height: 8),
               Text(
                 'AI Smart Nutrition & Health',
-                style: AppTextStyles.font14RegularMuted,
+                style: AppTextStyles.font14RegularMuted.copyWith(
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
+                ),
               ),
             ],
           ),

@@ -1,3 +1,6 @@
+import 'package:calogram_flutter/features/presentation/dashboard/widgets/today_empty_state.dart';
+import 'package:calogram_flutter/features/presentation/dashboard/widgets/today_header_section.dart';
+import 'package:calogram_flutter/features/presentation/dashboard/widgets/today_meal_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -12,12 +15,17 @@ class TodayTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
+
     return BlocBuilder<DashboardCubit, DashboardState>(
       builder: (context, state) {
         if (state is DashboardLoadingState || state is DashboardInitialState) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primaryNeonLime),
-          );
+          return Center(child: CircularProgressIndicator(color: primaryAccent));
         }
 
         if (state is DashboardLoadedState) {
@@ -29,8 +37,10 @@ class TodayTabView extends StatelessWidget {
 
           return SafeArea(
             child: RefreshIndicator(
-              color: AppColors.primaryNeonLime,
-              backgroundColor: AppColors.cardDarkElevated,
+              color: primaryAccent,
+              backgroundColor: isDark
+                  ? AppColors.cardDarkElevated
+                  : AppColors.cardLightElevated,
               onRefresh: () =>
                   context.read<DashboardCubit>().getDashboardData(),
               child: SingleChildScrollView(
@@ -42,33 +52,7 @@ class TodayTabView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Hello, ${user.name.isNotEmpty ? user.name : 'Champion'}!',
-                              style: AppTextStyles.font24BoldWhite,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Track every bite and reach your target.',
-                              style: AppTextStyles.font14RegularMuted,
-                            ),
-                          ],
-                        ),
-                        CircleAvatar(
-                          radius: 22,
-                          backgroundColor: AppColors.cardDarkElevated,
-                          child: const Icon(
-                            Icons.notifications_none_rounded,
-                            color: AppColors.textMainDark,
-                          ),
-                        ),
-                      ],
-                    ),
+                    TodayHeaderSection(userName: user.name),
                     const SizedBox(height: 24),
                     CalorieProgressCard(
                       consumedCalories: state.consumedCalories,
@@ -87,23 +71,25 @@ class TodayTabView extends StatelessWidget {
                     Text(
                       "Today's Meals",
                       style: AppTextStyles.font16BoldDark.copyWith(
-                        color: AppColors.textMainDark,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 12),
                     if (state.meals.isEmpty)
-                      _buildEmptyState()
+                      const TodayEmptyState()
                     else
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: state.meals.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 10),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           final meal = state.meals[index];
-                          return _buildMealItem(
+                          return TodayMealItem(
                             title: meal.title,
-                            details: 'P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g',
+                            details:
+                                'P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g',
                             calories: '${meal.calories} kcal',
                             icon: Icons.restaurant_rounded,
                           );
@@ -123,69 +109,6 @@ class TodayTabView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.cardDark,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.inputBorderDark, width: 1),
-      ),
-      child: Center(
-        child: Text(
-          'No meals logged yet today',
-          style: AppTextStyles.font14RegularMuted,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMealItem({
-    required String title,
-    required String details,
-    required String calories,
-    required IconData icon,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.cardDark,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.inputBorderDark, width: 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.cardDarkElevated,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: AppColors.primaryNeonLime, size: 22),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTextStyles.font14MediumWhite),
-                const SizedBox(height: 4),
-                Text(
-                  details,
-                  style: AppTextStyles.font14RegularMuted.copyWith(
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(calories, style: AppTextStyles.font14SemiBoldLime),
-        ],
-      ),
     );
   }
 }

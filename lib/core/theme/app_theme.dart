@@ -55,7 +55,7 @@ class AppTheme {
       primaryColor: AppColors.primaryLimeDark,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryLimeDark,
-        onPrimary: Colors.white,
+        onPrimary: AppColors.textMainLight,
         secondary: AppColors.secondaryAmber,
         surface: AppColors.cardLight,
         onSurface: AppColors.textMainLight,
@@ -74,7 +74,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryLimeDark,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.textMainLight,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

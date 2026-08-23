@@ -7,4 +7,5 @@ abstract class AppRoutes {
   static const String dashboardScreen = '/dashboardScreen';
   static const String editProfileScreen = '/editProfile';
   static const String settingsScreen = '/settings';
+  static const String themeSelectionScreen = '/themeSelectionScreen';
 }

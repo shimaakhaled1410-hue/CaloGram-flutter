@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 
@@ -13,81 +14,155 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.cardDark,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.inputBorderDark,
-            width: 1,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.topCenter,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(34),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: isDark
+                        ? [
+                            AppColors.backgroundDark.withValues(alpha: 0.5),
+                            AppColors.backgroundDark.withValues(alpha: 0.35),
+                          ]
+                        : [
+                            Colors.white.withValues(alpha: 0.96),
+                            const Color.fromARGB(255, 240, 241, 240),
+                          ],
+                  ),
+                  borderRadius: BorderRadius.circular(34),
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.9),
+                      width: 1,
+                    ),
+                    left: BorderSide.none,
+                    right: BorderSide.none,
+                    bottom: BorderSide.none,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.4 : 0.03,
+                      ),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildNavItem(
+                          context: context,
+                          index: 0,
+                          icon: Icons.dashboard_rounded,
+                          label: 'Today',
+                        ),
+                        _buildNavItem(
+                          context: context,
+                          index: 1,
+                          icon: Icons.kitchen_rounded,
+                          label: 'Fridge',
+                        ),
+                        const SizedBox(width: 56),
+                        _buildNavItem(
+                          context: context,
+                          index: 2,
+                          icon: Icons.mic_rounded,
+                          label: 'Voice',
+                        ),
+                        _buildNavItem(
+                          context: context,
+                          index: 3,
+                          icon: Icons.person_rounded,
+                          label: 'Profile',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                index: 0,
-                icon: Icons.dashboard_rounded,
-                label: 'Today',
-              ),
-              _buildNavItem(
-                index: 1,
-                icon: Icons.kitchen_rounded,
-                label: 'Fridge',
-              ),
-              _buildCenterScanButton(),
-              _buildNavItem(
-                index: 2,
-                icon: Icons.mic_rounded,
-                label: 'Voice',
-              ),
-              _buildNavItem(
-                index: 3,
-                icon: Icons.person_rounded,
-                label: 'Profile',
-              ),
-            ],
-          ),
-        ),
-      ),
+        Positioned(top: -12, child: _buildCenterScanButton()),
+      ],
     );
   }
 
   Widget _buildNavItem({
+    required BuildContext context,
     required int index,
     required IconData icon,
     required String label,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final bool isSelected = selectedIndex == index;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
+    final inactiveColor = isDark
+        ? AppColors.textMutedDark
+        : AppColors.textMutedLight;
+
     return GestureDetector(
       onTap: () => onItemTapped(index),
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 24,
-            color: isSelected
-                ? AppColors.primaryNeonLime
-                : AppColors.textMutedDark,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected
-                  ? AppColors.primaryNeonLime
-                  : AppColors.textMutedDark,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? primaryAccent.withValues(alpha: 0.14)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedScale(
+              scale: isSelected ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutBack,
+              child: Icon(
+                icon,
+                size: 22,
+                color: isSelected ? primaryAccent : inactiveColor,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? primaryAccent : inactiveColor,
+              ),
+              child: Text(label),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -96,15 +171,20 @@ class CustomBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onItemTapped(4),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: AppColors.primaryLimeGradient,
           shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 2,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryNeonLime.withValues(alpha: 0.4),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
+              color: AppColors.primaryNeonLime.withValues(alpha: 0.45),
+              blurRadius: 20,
+              spreadRadius: 1,
+              offset: const Offset(0, 6),
             ),
           ],
         ),

@@ -2,43 +2,44 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import '../../../../../../core/theme/app_text_styles.dart';
 
-class ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
+class ThemeOptionCard extends StatelessWidget {
   final String title;
   final String subtitle;
+  final IconData icon;
+  final bool isSelected;
   final VoidCallback onTap;
-  final Color iconColor;
-  final bool isDestructive;
 
-  const ProfileMenuItem({
+  const ThemeOptionCard({
     super.key,
-    required this.icon,
     required this.title,
     required this.subtitle,
+    required this.icon,
+    required this.isSelected,
     required this.onTap,
-    required this.iconColor,
-    this.isDestructive = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final primaryAccent =
+        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDestructive
-                ? AppColors.error.withValues(alpha: 0.3)
+            color: isSelected
+                ? primaryAccent
                 : (isDark
-                      ? AppColors.inputBorderDark
-                      : AppColors.inputBorderLight),
+                    ? AppColors.inputBorderDark
+                    : AppColors.inputBorderLight),
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
@@ -46,10 +47,20 @@ class ProfileMenuItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.12),
+                color: isSelected
+                    ? primaryAccent.withValues(alpha: 0.15)
+                    : (isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.black.withValues(alpha: 0.05)),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: iconColor, size: 22),
+              child: Icon(
+                icon,
+                color: isSelected
+                    ? primaryAccent
+                    : (isDark ? Colors.white70 : Colors.black54),
+                size: 22,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -58,13 +69,9 @@ class ProfileMenuItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: isDestructive
-                        ? AppTextStyles.font14SemiBoldWhite.copyWith(
-                            color: AppColors.error,
-                          )
-                        : AppTextStyles.font14SemiBoldWhite.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
+                    style: AppTextStyles.font14SemiBoldWhite.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -78,11 +85,18 @@ class ProfileMenuItem extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: isDark ? Colors.white30 : Colors.black38,
-              size: 14,
-            ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle_rounded,
+                color: primaryAccent,
+                size: 22,
+              )
+            else
+              Icon(
+                Icons.circle_outlined,
+                color: isDark ? Colors.white24 : Colors.black26,
+                size: 22,
+              ),
           ],
         ),
       ),

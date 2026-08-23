@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_text_form_field.dart';
@@ -69,21 +70,24 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
     final int targetFats = ((targetCalories * 0.25) / 9).round();
 
     context.read<AuthCubit>().updateProfileMetrics(
-          gender: _selectedGender,
-          age: age,
-          height: height,
-          weight: weight,
-          goal: _selectedGoal,
-          activityLevel: _activityLevel,
-          targetCalories: targetCalories,
-          targetProtein: targetProtein,
-          targetCarbs: targetCarbs,
-          targetFats: targetFats,
-        );
+      gender: _selectedGender,
+      age: age,
+      height: height,
+      weight: weight,
+      goal: _selectedGoal,
+      activityLevel: _activityLevel,
+      targetCalories: targetCalories,
+      targetProtein: targetProtein,
+      targetCarbs: targetCarbs,
+      targetFats: targetFats,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UpdateMetricsSuccessState) {
@@ -109,15 +113,26 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                 children: [
                   Text(
                     'Personalize Your Plan',
-                    style: AppTextStyles.font24BoldWhite,
+                    style: AppTextStyles.font24BoldWhite.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'AI uses these metrics to accurately calculate your daily macros & targets.',
-                    style: AppTextStyles.font14RegularMuted,
+                    style: AppTextStyles.font14RegularMuted.copyWith(
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight,
+                    ),
                   ),
                   const SizedBox(height: 24),
-                  Text('Gender', style: AppTextStyles.font14MediumWhite),
+                  Text(
+                    'Gender',
+                    style: AppTextStyles.font14MediumWhite.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -135,7 +150,8 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                           title: 'Female',
                           icon: Icons.female_rounded,
                           isSelected: _selectedGender == 'female',
-                          onTap: () => setState(() => _selectedGender = 'female'),
+                          onTap: () =>
+                              setState(() => _selectedGender = 'female'),
                         ),
                       ),
                     ],
@@ -148,8 +164,9 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                           controller: _ageController,
                           hintText: 'Age (yrs)',
                           keyboardType: TextInputType.number,
-                          validator: (value) =>
-                              (value == null || value.isEmpty) ? 'Required' : null,
+                          validator: (value) => (value == null || value.isEmpty)
+                              ? 'Required'
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -158,8 +175,9 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                           controller: _heightController,
                           hintText: 'Height (cm)',
                           keyboardType: TextInputType.number,
-                          validator: (value) =>
-                              (value == null || value.isEmpty) ? 'Required' : null,
+                          validator: (value) => (value == null || value.isEmpty)
+                              ? 'Required'
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -168,14 +186,20 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                           controller: _weightController,
                           hintText: 'Weight (kg)',
                           keyboardType: TextInputType.number,
-                          validator: (value) =>
-                              (value == null || value.isEmpty) ? 'Required' : null,
+                          validator: (value) => (value == null || value.isEmpty)
+                              ? 'Required'
+                              : null,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 24),
-                  Text('Primary Goal', style: AppTextStyles.font14MediumWhite),
+                  Text(
+                    'Primary Goal',
+                    style: AppTextStyles.font14MediumWhite.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   SelectableCard(
                     title: 'Lose Weight',
@@ -187,7 +211,8 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                   const SizedBox(height: 10),
                   SelectableCard(
                     title: 'Maintain Weight',
-                    subtitle: 'Keep current weight while improving energy & health',
+                    subtitle:
+                        'Keep current weight while improving energy & health',
                     icon: Icons.horizontal_rule_rounded,
                     isSelected: _selectedGoal == 'maintain',
                     onTap: () => setState(() => _selectedGoal = 'maintain'),
@@ -195,13 +220,19 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                   const SizedBox(height: 10),
                   SelectableCard(
                     title: 'Gain Muscle',
-                    subtitle: 'Build muscle mass with calculated calorie surplus',
+                    subtitle:
+                        'Build muscle mass with calculated calorie surplus',
                     icon: Icons.fitness_center_rounded,
                     isSelected: _selectedGoal == 'gain_muscle',
                     onTap: () => setState(() => _selectedGoal = 'gain_muscle'),
                   ),
                   const SizedBox(height: 24),
-                  Text('Activity Level', style: AppTextStyles.font14MediumWhite),
+                  Text(
+                    'Activity Level',
+                    style: AppTextStyles.font14MediumWhite.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   SelectableCard(
                     title: 'Sedentary',
@@ -228,7 +259,9 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                   ),
                   const SizedBox(height: 32),
                   CustomGradientButton(
-                    text: isLoading ? 'Calculating Plan...' : 'Calculate My Plan & Continue',
+                    text: isLoading
+                        ? 'Calculating Plan...'
+                        : 'Calculate My Plan & Continue',
                     onPressed: isLoading ? () {} : _calculateAndSubmit,
                   ),
                   const SizedBox(height: 16),

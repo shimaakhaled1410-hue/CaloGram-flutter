@@ -10,7 +10,6 @@ import '../../../../utils/app_regex.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_text_form_field.dart';
 
-
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
 
@@ -35,6 +34,8 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is RegisterSuccessState) {
@@ -44,10 +45,7 @@ class _RegisterFormState extends State<RegisterForm> {
           );
           context.go(AppRoutes.goalSetupScreen);
         } else if (state is RegisterErrorState) {
-          CustomSnackBar.showError(
-            context,
-            message: state.errMessage,
-          );
+          CustomSnackBar.showError(context, message: state.errMessage);
         }
       },
       builder: (context, state) {
@@ -61,9 +59,11 @@ class _RegisterFormState extends State<RegisterForm> {
                 controller: _nameController,
                 hintText: 'Full Name',
                 keyboardType: TextInputType.name,
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.person_outline_rounded,
-                  color: AppColors.textMutedDark,
+                  color: isDark
+                      ? AppColors.textMutedDark
+                      : AppColors.textMutedLight,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().length < 3) {
@@ -77,9 +77,11 @@ class _RegisterFormState extends State<RegisterForm> {
                 controller: _emailController,
                 hintText: 'Email Address',
                 keyboardType: TextInputType.emailAddress,
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.email_outlined,
-                  color: AppColors.textMutedDark,
+                  color: isDark
+                      ? AppColors.textMutedDark
+                      : AppColors.textMutedLight,
                 ),
                 validator: (value) {
                   if (value == null || !AppRegex.isEmailValid(value)) {
@@ -93,16 +95,20 @@ class _RegisterFormState extends State<RegisterForm> {
                 controller: _passwordController,
                 hintText: 'Password (min 8 chars & 1 number)',
                 isObscureText: _isPasswordObscure,
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.lock_outline_rounded,
-                  color: AppColors.textMutedDark,
+                  color: isDark
+                      ? AppColors.textMutedDark
+                      : AppColors.textMutedLight,
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _isPasswordObscure
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
-                    color: AppColors.textMutedDark,
+                    color: isDark
+                        ? AppColors.textMutedDark
+                        : AppColors.textMutedLight,
                   ),
                   onPressed: () {
                     setState(() => _isPasswordObscure = !_isPasswordObscure);
@@ -123,10 +129,10 @@ class _RegisterFormState extends State<RegisterForm> {
                     : () {
                         if (_formKey.currentState!.validate()) {
                           context.read<AuthCubit>().register(
-                                name: _nameController.text,
-                                email: _emailController.text,
-                                password: _passwordController.text,
-                              );
+                            name: _nameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          );
                         }
                       },
               ),

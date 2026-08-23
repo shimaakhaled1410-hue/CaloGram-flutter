@@ -3,6 +3,7 @@ import 'package:calogram_flutter/features/data/datasources/dashboard_remote_data
 import 'package:calogram_flutter/features/data/datasources/food_scanner_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/profile_local_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/smart_fridge_remote_data_source.dart';
+import 'package:calogram_flutter/features/data/datasources/theme_local_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/voice_logger_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/repo_impl/auth_repo_impl.dart';
 import 'package:calogram_flutter/features/data/repo_impl/dashboard_repo_impl.dart';
@@ -32,6 +33,7 @@ import 'package:calogram_flutter/features/presentation/manager/dashboard/dashboa
 import 'package:calogram_flutter/features/presentation/manager/food_scanner/food_scanner_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/profile/profile_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/smart_fridge/smart_fridge_cubit.dart';
+import 'package:calogram_flutter/features/presentation/manager/theme/theme_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/voice_logger/voice_logger_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -175,4 +177,12 @@ void setupServiceLocator() {
   sl.registerLazySingleton<ProfileLocalDataSource>(
     () => ProfileLocalDataSourceImpl(),
   );
+
+  ///theme///
+  
+  sl.registerLazySingleton<ThemeLocalDataSource>(
+    () => ThemeLocalDataSourceImpl(),
+  );
+
+  sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(localDataSource: sl()));
 }

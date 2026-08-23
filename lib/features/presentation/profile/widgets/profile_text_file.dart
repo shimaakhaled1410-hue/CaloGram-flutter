@@ -16,38 +16,65 @@ class ProfileTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryAccent =
+        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           label,
-          style: AppTextStyles.font12MediumMuted,
+          style: AppTextStyles.font12MediumMuted.copyWith(
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
+          ),
         ),
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          style: AppTextStyles.font14MediumWhite,
+          style: AppTextStyles.font14MediumWhite.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
           validator: (value) =>
               (value == null || value.trim().isEmpty) ? 'Required' : null,
           decoration: InputDecoration(
             hintText: 'Enter $label',
-            hintStyle: AppTextStyles.font14RegularMuted.copyWith(color: Colors.white24),
+            hintStyle: AppTextStyles.font14RegularMuted.copyWith(
+              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+            ),
             filled: true,
-            fillColor: AppColors.cardDark,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            fillColor: theme.colorScheme.surface,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppColors.inputBorderDark),
+              borderSide: BorderSide(
+                color: isDark
+                    ? AppColors.inputBorderDark
+                    : AppColors.inputBorderLight,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppColors.inputBorderDark),
+              borderSide: BorderSide(
+                color: isDark
+                    ? AppColors.inputBorderDark
+                    : AppColors.inputBorderLight,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppColors.primaryNeonLime, width: 1.5),
+              borderSide: BorderSide(
+                color: primaryAccent,
+                width: 1.5,
+              ),
             ),
           ),
         ),

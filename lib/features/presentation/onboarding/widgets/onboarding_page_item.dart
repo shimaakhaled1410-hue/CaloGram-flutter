@@ -6,13 +6,13 @@ import '../../../../../core/theme/app_text_styles.dart';
 class OnboardingPageItem extends StatelessWidget {
   final OnboardingModel model;
 
-  const OnboardingPageItem({
-    super.key,
-    required this.model,
-  });
+  const OnboardingPageItem({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -32,23 +32,23 @@ class OnboardingPageItem extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(
-              model.icon,
-              size: 70,
-              color: AppColors.backgroundDark,
-            ),
+            child: Icon(model.icon, size: 70, color: AppColors.backgroundDark),
           ),
           const SizedBox(height: 48),
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: AppTextStyles.font28BoldWhite,
+              style: AppTextStyles.font28BoldWhite.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
               children: [
                 TextSpan(text: '${model.title} '),
                 TextSpan(
                   text: model.highlightWord,
                   style: AppTextStyles.font28BoldWhite.copyWith(
-                    color: AppColors.primaryNeonLime,
+                    color: isDark
+                        ? AppColors.primaryNeonLime
+                        : AppColors.primaryLimeDark,
                   ),
                 ),
               ],
@@ -60,6 +60,9 @@ class OnboardingPageItem extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTextStyles.font16MediumSecondary.copyWith(
               height: 1.5,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
             ),
           ),
         ],

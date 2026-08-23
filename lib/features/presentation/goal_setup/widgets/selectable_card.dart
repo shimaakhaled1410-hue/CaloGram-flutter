@@ -20,6 +20,13 @@ class SelectableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -27,13 +34,15 @@ class SelectableCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryNeonLime.withValues(alpha: 0.12)
-              : AppColors.cardDark,
+              ? primaryAccent.withValues(alpha: 0.12)
+              : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? AppColors.primaryNeonLime
-                : AppColors.inputBorderDark,
+                ? primaryAccent
+                : (isDark
+                      ? AppColors.inputBorderDark
+                      : AppColors.inputBorderLight),
             width: isSelected ? 1.8 : 1.2,
           ),
         ),
@@ -43,15 +52,19 @@ class SelectableCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primaryNeonLime
-                    : AppColors.cardDarkElevated,
+                    ? primaryAccent
+                    : (isDark
+                          ? AppColors.cardDarkElevated
+                          : AppColors.cardLightElevated),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
                 color: isSelected
-                    ? AppColors.backgroundDark
-                    : AppColors.textSecondaryDark,
+                    ? (isDark ? AppColors.backgroundDark : Colors.white)
+                    : (isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight),
                 size: 22,
               ),
             ),
@@ -63,11 +76,12 @@ class SelectableCard extends StatelessWidget {
                   Text(
                     title,
                     style: AppTextStyles.font14MediumWhite.copyWith(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
                       color: isSelected
-                          ? AppColors.primaryNeonLime
-                          : AppColors.textMainDark,
+                          ? primaryAccent
+                          : theme.colorScheme.onSurface,
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -76,6 +90,9 @@ class SelectableCard extends StatelessWidget {
                       subtitle!,
                       style: AppTextStyles.font14RegularMuted.copyWith(
                         fontSize: 12,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
                       ),
                     ),
                   ],
@@ -83,11 +100,7 @@ class SelectableCard extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              const Icon(
-                Icons.check_circle_rounded,
-                color: AppColors.primaryNeonLime,
-                size: 20,
-              ),
+              Icon(Icons.check_circle_rounded, color: primaryAccent, size: 20),
           ],
         ),
       ),
