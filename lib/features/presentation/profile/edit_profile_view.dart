@@ -83,32 +83,42 @@ class _EditProfileContentState extends State<EditProfileContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: Text('Edit Goals & Metrics', style: AppTextStyles.font20BoldWhite),
-        centerTitle: true,
-      ),
-      body: BlocConsumer<ProfileCubit, ProfileState>(
-        listener: (context, state) {
-          if (state is ProfileUpdatedSuccess) {
-            CustomSnackBar.showSuccess(
-              context,
-              message: 'Profile targets updated successfully! ✨',
-            );
-            context.pop();
-          } else if (state is ProfileLoaded && !_isInitialized) {
-            _populateControllers(state.profile);
-            _isInitialized = true;
-          }
-        },
-        builder: (context, state) {
-          final isLoading = state is ProfileUpdating;
+    return BlocConsumer<ProfileCubit, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileUpdatedSuccess) {
+          CustomSnackBar.showSuccess(
+            context,
+            message: 'Profile targets updated successfully!',
+          );
+          context.pop();
+        } else if (state is ProfileLoaded && !_isInitialized) {
+          _populateControllers(state.profile);
+          _isInitialized = true;
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is ProfileUpdating;
 
-          return SingleChildScrollView(
+        return Scaffold(
+          backgroundColor: AppColors.backgroundDark,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () => context.pop(),
+            ),
+            title: Text(
+              'Edit Goals & Metrics',
+              style: AppTextStyles.font20BoldWhite,
+            ),
+            centerTitle: true,
+          ),
+          body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Form(
               key: _formKey,
@@ -121,6 +131,26 @@ class _EditProfileContentState extends State<EditProfileContent> {
                     heightController: _heightController,
                     targetWeightController: _targetWeightController,
                   ),
+                  const SizedBox(height: 18),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.primaryNeonLime),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      minimumSize: const Size(double.infinity, 46),
+                    ),
+                    onPressed: _autoCalculateNutrition,
+                    icon: const Icon(
+                      Icons.auto_awesome,
+                      color: AppColors.primaryNeonLime,
+                      size: 18,
+                    ),
+                    label: Text(
+                      'Auto-Calculate Targets with AI',
+                      style: AppTextStyles.font14SemiBoldLime,
+                    ),
+                  ),
                   const SizedBox(height: 24),
                   MacroTargetsSection(
                     caloriesController: _caloriesController,
@@ -128,34 +158,38 @@ class _EditProfileContentState extends State<EditProfileContent> {
                     carbsController: _carbsController,
                     fatsController: _fatsController,
                   ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryNeonLime,
-                      minimumSize: const Size(double.infinity, 52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: isLoading ? null : _saveProfile,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : Text('Save Changes', style: AppTextStyles.font16BoldDark),
-                  ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryNeonLime,
+                  minimumSize: const Size(double.infinity, 52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                onPressed: isLoading ? null : _saveProfile,
+                child: isLoading
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : Text('Save Changes', style: AppTextStyles.font16BoldDark),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -173,5 +207,43 @@ class _EditProfileContentState extends State<EditProfileContent> {
       );
       context.read<ProfileCubit>().updateProfile(updated);
     }
+  }
+
+  void _autoCalculateNutrition() {
+    final double? weight = double.tryParse(_weightController.text);
+    final double? height = double.tryParse(_heightController.text);
+    final double? targetWeight = double.tryParse(_targetWeightController.text);
+
+    if (weight == null || height == null) {
+      CustomSnackBar.showError(
+        context,
+        message: 'Please enter valid weight and height first',
+      );
+      return;
+    }
+
+    final double bmr = (10 * weight) + (6.25 * height) - (5 * 25) + 5;
+    double tdee = bmr * 1.375; // Moderate active
+
+    if (targetWeight != null) {
+      if (targetWeight < weight) {
+        tdee -= 400;
+      } else if (targetWeight > weight) {
+        tdee += 300;
+      }
+    }
+
+    final int calculatedCalories = tdee.round();
+
+    final int protein = ((calculatedCalories * 0.30) / 4).round();
+    final int carbs = ((calculatedCalories * 0.45) / 4).round();
+    final int fats = ((calculatedCalories * 0.25) / 9).round();
+
+    setState(() {
+      _caloriesController.text = calculatedCalories.toString();
+      _proteinController.text = protein.toString();
+      _carbsController.text = carbs.toString();
+      _fatsController.text = fats.toString();
+    });
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:calogram_flutter/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -8,6 +9,7 @@ import '../../domain/entities/user_entity.dart';
 import '../../domain/repo/dashboard_repo.dart';
 import '../datasources/dashboard_remote_data_source.dart';
 import '../models/meal_model.dart';
+import '../models/user_model.dart';
 
 class DashboardRepoImpl implements DashboardRepo {
   final DashboardRemoteDataSource remoteDataSource;
@@ -26,6 +28,27 @@ class DashboardRepoImpl implements DashboardRepo {
   Future<Either<Failure, UserEntity>> fetchUserProfile() async {
     try {
       final uid = _getUid();
+
+      final String? cachedJson = CacheHelper.getString(
+        key: 'CACHED_USER_PROFILE',
+      );
+      if (cachedJson != null && cachedJson.isNotEmpty) {
+        final Map<String, dynamic> data = jsonDecode(cachedJson);
+        return Right(
+          UserModel(
+            uId: uid,
+            email: '',
+            name: data['name'] ?? 'Champion',
+            weight: (data['currentWeight'] as num?)?.toDouble(),
+            height: (data['height'] as num?)?.toDouble(),
+            targetCalories: (data['targetCalories'] as num?)?.toInt(),
+            targetProtein: (data['targetProtein'] as num?)?.toInt(),
+            targetCarbs: (data['targetCarbs'] as num?)?.toInt(),
+            targetFats: (data['targetFats'] as num?)?.toInt(),
+          ),
+        );
+      }
+
       final user = await remoteDataSource.fetchUserProfile(uid);
       return Right(user);
     } on AuthException catch (e) {

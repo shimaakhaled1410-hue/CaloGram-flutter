@@ -47,7 +47,9 @@ class ProfileContent extends StatelessWidget {
           builder: (context, state) {
             if (state is ProfileLoading) {
               return const Center(
-                child: CircularProgressIndicator(color: AppColors.primaryNeonLime),
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryNeonLime,
+                ),
               );
             }
 
@@ -57,7 +59,10 @@ class ProfileContent extends StatelessWidget {
                   : (state as ProfileUpdatedSuccess).profile;
 
               return ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 children: [
                   // --- Avatar & User Info ---
                   Center(
@@ -70,12 +75,16 @@ class ProfileContent extends StatelessWidget {
                             shape: BoxShape.circle,
                             color: AppColors.cardDark,
                             border: Border.all(
-                              color: AppColors.primaryNeonLime.withValues(alpha: 0.6),
+                              color: AppColors.primaryNeonLime.withValues(
+                                alpha: 0.6,
+                              ),
                               width: 2,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryNeonLime.withValues(alpha: 0.2),
+                                color: AppColors.primaryNeonLime.withValues(
+                                  alpha: 0.2,
+                                ),
                                 blurRadius: 16,
                                 offset: const Offset(0, 4),
                               ),
@@ -92,7 +101,10 @@ class ProfileContent extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        Text(profile.name, style: AppTextStyles.font20BoldWhite),
+                        Text(
+                          profile.name,
+                          style: AppTextStyles.font20BoldWhite,
+                        ),
                         const SizedBox(height: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -103,7 +115,9 @@ class ProfileContent extends StatelessWidget {
                             color: AppColors.cardDark,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: AppColors.primaryNeonLime.withValues(alpha: 0.3),
+                              color: AppColors.primaryNeonLime.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                           ),
                           child: Text(
@@ -126,8 +140,12 @@ class ProfileContent extends StatelessWidget {
                     title: 'Edit Personal Data & Goals',
                     subtitle: 'Update weight, macros, and targets',
                     iconColor: AppColors.primaryNeonLime,
-                    onTap: () {
-                      context.push(AppRoutes.editProfileScreen);
+                    onTap: () async {
+                      await context.push(AppRoutes.editProfileScreen);
+
+                      if (context.mounted) {
+                        context.read<ProfileCubit>().loadProfile();
+                      }
                     },
                   ),
                   const SizedBox(height: 12),

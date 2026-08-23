@@ -14,17 +14,30 @@ class CalorieProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int remaining = targetCalories - consumedCalories;
+    final bool isOverTarget = consumedCalories > targetCalories;
+    final int difference = isOverTarget
+        ? consumedCalories - targetCalories
+        : targetCalories - consumedCalories;
+
     final double progress = targetCalories > 0
         ? (consumedCalories / targetCalories).clamp(0.0, 1.0)
         : 0.0;
+
+    final Color statusColor = isOverTarget
+        ? const Color(0xFFEF4444)
+        : AppColors.primaryNeonLime;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.cardDark,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.inputBorderDark, width: 1),
+        border: Border.all(
+          color: isOverTarget
+              ? const Color(0xFFEF4444).withValues(alpha: 0.5)
+              : AppColors.inputBorderDark,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -35,13 +48,20 @@ class CalorieProgressCard extends StatelessWidget {
                 Text('Daily Calories', style: AppTextStyles.font14RegularMuted),
                 const SizedBox(height: 6),
                 Text(
-                  '${remaining < 0 ? 0 : remaining}',
+                  '$difference',
                   style: AppTextStyles.font28BoldWhite.copyWith(
-                    color: AppColors.primaryNeonLime,
+                    color: statusColor,
                     fontSize: 32,
                   ),
                 ),
-                Text('kcal remaining', style: AppTextStyles.font14MediumWhite),
+                Text(
+                  isOverTarget ? 'kcal over target ⚠️' : 'kcal remaining',
+                  style: AppTextStyles.font14MediumWhite.copyWith(
+                    color: isOverTarget
+                        ? const Color(0xFFEF4444)
+                        : Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
@@ -55,16 +75,18 @@ class CalorieProgressCard extends StatelessWidget {
                   value: progress,
                   strokeWidth: 9,
                   backgroundColor: AppColors.cardDarkElevated,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.primaryNeonLime,
-                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(statusColor),
                   strokeCap: StrokeCap.round,
                 ),
                 Center(
                   child: Text(
-                    '${(progress * 100).toInt()}%',
+                    isOverTarget
+                        ? '${((consumedCalories / targetCalories) * 100).toInt()}%'
+                        : '${(progress * 100).toInt()}%',
                     style: AppTextStyles.font16BoldDark.copyWith(
-                      color: AppColors.textMainDark,
+                      color: isOverTarget
+                          ? const Color(0xFFEF4444)
+                          : AppColors.textMainDark,
                     ),
                   ),
                 ),
