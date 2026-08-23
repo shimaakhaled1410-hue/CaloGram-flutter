@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:calogram_flutter/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -7,14 +6,18 @@ import '../../../../core/services/cache_helper.dart';
 import '../../domain/entities/meal_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repo/dashboard_repo.dart';
+import '../datasources/dashboard_local_data_source.dart';
 import '../datasources/dashboard_remote_data_source.dart';
 import '../models/meal_model.dart';
-import '../models/user_model.dart';
 
 class DashboardRepoImpl implements DashboardRepo {
   final DashboardRemoteDataSource remoteDataSource;
+  final DashboardLocalDataSource localDataSource;
 
-  DashboardRepoImpl({required this.remoteDataSource});
+  DashboardRepoImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+  });
 
   String _getUid() {
     final uid = CacheHelper.getString(key: AppConstants.cachedUserToken);
@@ -27,30 +30,15 @@ class DashboardRepoImpl implements DashboardRepo {
   @override
   Future<Either<Failure, UserEntity>> fetchUserProfile() async {
     try {
-      final uid = _getUid();
-
-      final String? cachedJson = CacheHelper.getString(
-        key: 'CACHED_USER_PROFILE',
-      );
-      if (cachedJson != null && cachedJson.isNotEmpty) {
-        final Map<String, dynamic> data = jsonDecode(cachedJson);
-        return Right(
-          UserModel(
-            uId: uid,
-            email: '',
-            name: data['name'] ?? 'Champion',
-            weight: (data['currentWeight'] as num?)?.toDouble(),
-            height: (data['height'] as num?)?.toDouble(),
-            targetCalories: (data['targetCalories'] as num?)?.toInt(),
-            targetProtein: (data['targetProtein'] as num?)?.toInt(),
-            targetCarbs: (data['targetCarbs'] as num?)?.toInt(),
-            targetFats: (data['targetFats'] as num?)?.toInt(),
-          ),
-        );
+      final cachedUser = await localDataSource.getCachedUser();
+      if (cachedUser != null) {
+        return Right(cachedUser);
       }
 
-      final user = await remoteDataSource.fetchUserProfile(uid);
-      return Right(user);
+      final uid = _getUid();
+      final remoteUser = await remoteDataSource.fetchUserProfile(uid);
+      await localDataSource.cacheUser(remoteUser);
+      return Right(remoteUser);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
@@ -66,16 +54,27 @@ class DashboardRepoImpl implements DashboardRepo {
   Future<Either<Failure, List<MealEntity>>> fetchTodayMeals() async {
     try {
       final uid = _getUid();
-      final meals = await remoteDataSource.fetchTodayMeals(uid);
-      return Right(meals);
+      final remoteMeals = await remoteDataSource.fetchTodayMeals(uid);
+      await localDataSource.cacheMeals(remoteMeals);
+      return Right(remoteMeals);
+    } on NetworkException catch (_) {
+      try {
+        final cachedMeals = await localDataSource.getCachedMeals();
+        return Right(cachedMeals);
+      } catch (_) {
+        return Left(NetworkFailure('No connection and no cached meals available'));
+      }
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
     } catch (_) {
-      return Left(ServerFailure('Failed to fetch meals'));
+      try {
+        final cachedMeals = await localDataSource.getCachedMeals();
+        return Right(cachedMeals);
+      } catch (_) {
+        return Left(ServerFailure('Failed to fetch meals'));
+      }
     }
   }
 
@@ -94,6 +93,7 @@ class DashboardRepoImpl implements DashboardRepo {
         loggedAt: meal.loggedAt,
       );
       await remoteDataSource.logMeal(uid, mealModel);
+      await localDataSource.addMealToCache(mealModel);
       return const Right(null);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));

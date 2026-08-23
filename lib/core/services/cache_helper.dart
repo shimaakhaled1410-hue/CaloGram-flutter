@@ -7,19 +7,32 @@ class CacheHelper {
     _preferences = await SharedPreferences.getInstance();
   }
 
-  static Future<bool> setData({
+  static Future<bool> setString({
     required String key,
-    required dynamic value,
+    required String value,
   }) async {
-    if (value is String) return await _preferences.setString(key, value);
-    if (value is int) return await _preferences.setInt(key, value);
-    if (value is bool) return await _preferences.setBool(key, value);
-    if (value is double) return await _preferences.setDouble(key, value);
-    return false;
+    return await _preferences.setString(key, value);
   }
 
-  static dynamic getData({required String key}) {
-    return _preferences.get(key);
+  static Future<bool> setBool({
+    required String key,
+    required bool value,
+  }) async {
+    return await _preferences.setBool(key, value);
+  }
+
+  static Future<bool> setInt({
+    required String key,
+    required int value,
+  }) async {
+    return await _preferences.setInt(key, value);
+  }
+
+  static Future<bool> setDouble({
+    required String key,
+    required double value,
+  }) async {
+    return await _preferences.setDouble(key, value);
   }
 
   static bool? getBool({required String key}) {
@@ -28,6 +41,14 @@ class CacheHelper {
 
   static String? getString({required String key}) {
     return _preferences.getString(key);
+  }
+
+  static int? getInt({required String key}) {
+    return _preferences.getInt(key);
+  }
+
+  static double? getDouble({required String key}) {
+    return _preferences.getDouble(key);
   }
 
   static Future<bool> removeData({required String key}) async {

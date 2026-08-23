@@ -10,8 +10,9 @@ abstract class ThemeLocalDataSource {
 class ThemeLocalDataSourceImpl implements ThemeLocalDataSource {
   @override
   ThemeMode getSavedThemeMode() {
-    final String? themeStr =
-        CacheHelper.getString(key: AppConstants.appThemeMode);
+    final String? themeStr = CacheHelper.getString(
+      key: AppConstants.appThemeMode,
+    );
     switch (themeStr) {
       case 'light':
         return ThemeMode.light;
@@ -29,6 +30,6 @@ class ThemeLocalDataSourceImpl implements ThemeLocalDataSource {
     if (mode == ThemeMode.light) value = 'light';
     if (mode == ThemeMode.dark) value = 'dark';
 
-    await CacheHelper.setData(key: AppConstants.appThemeMode, value: value);
+    await CacheHelper.setString(key: AppConstants.appThemeMode, value: value);
   }
 }

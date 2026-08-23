@@ -34,7 +34,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
   }
 
   Future<void> _continueAsGuest() async {
-    await CacheHelper.setData(key: AppConstants.isGuestUser, value: true);
+    await CacheHelper.setBool(key: AppConstants.isGuestUser, value: true);
     if (!mounted) return;
     context.go(AppRoutes.goalSetupScreen);
   }

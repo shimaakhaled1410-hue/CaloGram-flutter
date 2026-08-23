@@ -1,4 +1,5 @@
 import 'package:calogram_flutter/features/data/datasources/auth_remote_data_source.dart';
+import 'package:calogram_flutter/features/data/datasources/dashboard_local_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/dashboard_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/food_scanner_remote_data_source.dart';
 import 'package:calogram_flutter/features/data/datasources/profile_local_data_source.dart';
@@ -42,7 +43,7 @@ import 'package:get_it/get_it.dart';
 final GetIt sl = GetIt.instance;
 
 void setupServiceLocator() {
-  ///auth///
+  /// auth ///
 
   // External
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
@@ -83,6 +84,10 @@ void setupServiceLocator() {
 
   /// dashboard ///
 
+  sl.registerLazySingleton<DashboardLocalDataSource>(
+    () => DashboardLocalDataSourceImpl(),
+  );
+
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => DashboardRemoteDataSourceImpl(
       firebaseAuth: sl<FirebaseAuth>(),
@@ -91,7 +96,10 @@ void setupServiceLocator() {
   );
 
   sl.registerLazySingleton<DashboardRepo>(
-    () => DashboardRepoImpl(remoteDataSource: sl<DashboardRemoteDataSource>()),
+    () => DashboardRepoImpl(
+      remoteDataSource: sl<DashboardRemoteDataSource>(),
+      localDataSource: sl<DashboardLocalDataSource>(),
+    ),
   );
 
   sl.registerLazySingleton<GetDashboardDataUsecase>(
@@ -163,7 +171,7 @@ void setupServiceLocator() {
     () => SmartFridgeCubit(generateRecipesUseCase: sl(), logMealUsecase: sl()),
   );
 
-  ///profile///
+  /// profile ///
 
   sl.registerFactory(
     () =>
@@ -171,15 +179,15 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton(() => GetUserProfileUseCase(sl()));
   sl.registerLazySingleton(() => SaveUserProfileUseCase(sl()));
-  sl.registerLazySingleton<ProfileRepo>(
-    () => ProfileRepositoryImpl(localDataSource: sl()),
-  );
   sl.registerLazySingleton<ProfileLocalDataSource>(
     () => ProfileLocalDataSourceImpl(),
   );
+  sl.registerLazySingleton<ProfileRepo>(
+    () => ProfileRepositoryImpl(localDataSource: sl()),
+  );
 
-  ///theme///
-  
+  /// theme ///
+
   sl.registerLazySingleton<ThemeLocalDataSource>(
     () => ThemeLocalDataSourceImpl(),
   );

@@ -16,12 +16,12 @@ class AuthRepoImpl implements AuthRepo {
 
   Future<void> _cacheUserData(UserModel user) async {
     if (user.uId.isNotEmpty) {
-      await CacheHelper.setData(
+      await CacheHelper.setString(
         key: AppConstants.cachedUserToken,
         value: user.uId,
       );
     }
-    await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
+    await CacheHelper.setBool(key: AppConstants.isGuestUser, value: false);
 
     final double userWeight = user.weight ?? 70.0;
     final profileMap = {
@@ -35,8 +35,8 @@ class AuthRepoImpl implements AuthRepo {
       'targetFats': user.targetFats ?? 65,
     };
 
-    await CacheHelper.setData(
-      key: 'CACHED_USER_PROFILE',
+    await CacheHelper.setString(
+      key: AppConstants.cachedUserProfile,
       value: jsonEncode(profileMap),
     );
   }
@@ -167,8 +167,9 @@ class AuthRepoImpl implements AuthRepo {
     try {
       await remoteDataSource.signOut();
       await CacheHelper.removeData(key: AppConstants.cachedUserToken);
-      await CacheHelper.removeData(key: 'CACHED_USER_PROFILE');
-      await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
+      await CacheHelper.removeData(key: AppConstants.cachedUserProfile);
+      await CacheHelper.removeData(key: AppConstants.cachedTodayMeals);
+      await CacheHelper.setBool(key: AppConstants.isGuestUser, value: false);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
