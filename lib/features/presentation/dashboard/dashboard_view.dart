@@ -1,4 +1,5 @@
 import 'package:calogram_flutter/features/presentation/food_scanner/food_scanner_view.dart';
+import 'package:calogram_flutter/features/presentation/profile/profile_view.dart';
 import 'package:calogram_flutter/features/presentation/smart_fridge/smart_fridge_view.dart';
 import 'package:calogram_flutter/features/presentation/voice_logger/voice_logger_view.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,7 @@ class _DashboardViewState extends State<DashboardView> {
     TodayTabView(),
     SmartFridgeView(),
     VoiceLoggerView(),
-    Center(
-      child: Text('Profile & Settings', style: TextStyle(color: Colors.white)),
-    ),
+    ProfileView(),
     FoodScannerView(),
   ];
 

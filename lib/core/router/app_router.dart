@@ -4,9 +4,10 @@ import 'package:calogram_flutter/features/presentation/auth/register_view.dart';
 import 'package:calogram_flutter/features/presentation/dashboard/dashboard_view.dart';
 import 'package:calogram_flutter/features/presentation/goal_setup/goal_setup_view.dart';
 import 'package:calogram_flutter/features/presentation/onboarding/onboarding_view.dart';
+import 'package:calogram_flutter/features/presentation/profile/edit_profile_view.dart';
+import 'package:calogram_flutter/features/presentation/profile/settings_view.dart';
 import 'package:calogram_flutter/features/presentation/splash/splash_view.dart';
 import 'package:go_router/go_router.dart';
-
 
 abstract class AppRouter {
   static final GoRouter router = GoRouter(
@@ -35,6 +36,14 @@ abstract class AppRouter {
       GoRoute(
         path: AppRoutes.dashboardScreen,
         builder: (context, state) => const DashboardView(),
+      ),
+      GoRoute(
+        path: AppRoutes.editProfileScreen,
+        builder: (context, state) => const EditProfileView(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsScreen,
+        builder: (context, state) => const SettingsView(),
       ),
     ],
   );

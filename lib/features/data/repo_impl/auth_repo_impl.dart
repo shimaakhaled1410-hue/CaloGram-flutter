@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:calogram_flutter/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -6,11 +7,39 @@ import '../../../../core/services/cache_helper.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repo/auth_repo.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../models/user_model.dart';
 
 class AuthRepoImpl implements AuthRepo {
   final AuthRemoteDataSource remoteDataSource;
 
   AuthRepoImpl({required this.remoteDataSource});
+
+  Future<void> _cacheUserData(UserModel user) async {
+    if (user.uId.isNotEmpty) {
+      await CacheHelper.setData(
+        key: AppConstants.cachedUserToken,
+        value: user.uId,
+      );
+    }
+    await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
+
+    final double userWeight = user.weight ?? 70.0;
+    final profileMap = {
+      'name': user.name.isNotEmpty ? user.name : 'User',
+      'currentWeight': userWeight,
+      'height': user.height ?? 175.0,
+      'targetWeight': userWeight,
+      'targetCalories': user.targetCalories ?? 2000,
+      'targetProtein': user.targetProtein ?? 140,
+      'targetCarbs': user.targetCarbs ?? 200,
+      'targetFats': user.targetFats ?? 65,
+    };
+
+    await CacheHelper.setData(
+      key: 'CACHED_USER_PROFILE',
+      value: jsonEncode(profileMap),
+    );
+  }
 
   @override
   Future<Either<Failure, UserEntity>> login({
@@ -22,11 +51,7 @@ class AuthRepoImpl implements AuthRepo {
         email: email,
         password: password,
       );
-      await CacheHelper.setData(
-        key: AppConstants.cachedUserToken,
-        value: user.uId,
-      );
-      await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
+      await _cacheUserData(user);
       return Right(user);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
@@ -51,11 +76,7 @@ class AuthRepoImpl implements AuthRepo {
         email: email,
         password: password,
       );
-      await CacheHelper.setData(
-        key: AppConstants.cachedUserToken,
-        value: user.uId,
-      );
-      await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
+      await _cacheUserData(user);
       return Right(user);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
@@ -106,6 +127,7 @@ class AuthRepoImpl implements AuthRepo {
         updatedData: data,
       );
 
+      await _cacheUserData(updatedUser);
       return Right(updatedUser);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
@@ -127,6 +149,9 @@ class AuthRepoImpl implements AuthRepo {
         return const Right(null);
       }
       final user = await remoteDataSource.getCurrentUser(cachedUid);
+      if (user != null) {
+        await _cacheUserData(user);
+      }
       return Right(user);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -142,6 +167,7 @@ class AuthRepoImpl implements AuthRepo {
     try {
       await remoteDataSource.signOut();
       await CacheHelper.removeData(key: AppConstants.cachedUserToken);
+      await CacheHelper.removeData(key: 'CACHED_USER_PROFILE');
       await CacheHelper.setData(key: AppConstants.isGuestUser, value: false);
       return const Right(null);
     } on ServerException catch (e) {

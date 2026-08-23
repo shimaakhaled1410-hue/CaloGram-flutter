@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/services/cache_helper.dart';
 import '../models/user_profile_model.dart';
 
 abstract class ProfileLocalDataSource {
@@ -9,16 +9,13 @@ abstract class ProfileLocalDataSource {
 }
 
 class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
-  final SharedPreferences sharedPreferences;
   static const String _profileKey = 'CACHED_USER_PROFILE';
-
-  ProfileLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
   Future<UserProfileModel> getUserProfile() async {
     try {
-      final jsonString = sharedPreferences.getString(_profileKey);
-      if (jsonString != null) {
+      final jsonString = CacheHelper.getString(key: _profileKey);
+      if (jsonString != null && jsonString.isNotEmpty) {
         final Map<String, dynamic> map = jsonDecode(jsonString);
         return UserProfileModel.fromJson(map);
       } else {
@@ -35,7 +32,7 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   Future<void> saveUserProfile(UserProfileModel profile) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await sharedPreferences.setString(_profileKey, jsonString);
+      await CacheHelper.setData(key: _profileKey, value: jsonString);
     } catch (e) {
       throw CacheException('Failed to save profile');
     }
