@@ -9,6 +9,7 @@ abstract class DashboardRemoteDataSource {
   Future<UserModel> fetchUserProfile(String uId);
   Future<List<MealModel>> fetchTodayMeals(String uId);
   Future<void> logMeal(String uId, MealModel meal);
+  Future<void> deleteMeal(String uId, String mealId);
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -76,6 +77,22 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       throw NetworkException('No internet connection');
     } catch (_) {
       throw ServerException('Failed to log meal');
+    }
+  }
+
+  @override
+  Future<void> deleteMeal(String uId, String mealId) async {
+    try {
+      await firestore
+          .collection('users')
+          .doc(uId)
+          .collection('meals')
+          .doc(mealId)
+          .delete();
+    } on SocketException {
+      throw NetworkException('No internet connection');
+    } catch (_) {
+      throw ServerException('Failed to delete meal');
     }
   }
 }

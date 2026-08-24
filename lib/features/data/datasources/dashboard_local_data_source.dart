@@ -11,6 +11,7 @@ abstract class DashboardLocalDataSource {
   Future<List<MealModel>> getCachedMeals();
   Future<void> cacheMeals(List<MealModel> meals);
   Future<void> addMealToCache(MealModel meal);
+  Future<void> deleteMealFromCache(String mealId);
 }
 
 class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
@@ -104,6 +105,13 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   Future<void> addMealToCache(MealModel meal) async {
     final currentMeals = await getCachedMeals();
     currentMeals.insert(0, meal);
+    await cacheMeals(currentMeals);
+  }
+
+  @override
+  Future<void> deleteMealFromCache(String mealId) async {
+    final currentMeals = await getCachedMeals();
+    currentMeals.removeWhere((m) => m.id == mealId);
     await cacheMeals(currentMeals);
   }
 }

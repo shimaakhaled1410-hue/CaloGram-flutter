@@ -107,4 +107,22 @@ class DashboardRepoImpl implements DashboardRepo {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> deleteMeal(String mealId) async {
+    try {
+      final uid = _getUid();
+      await remoteDataSource.deleteMeal(uid, mealId);
+      await localDataSource.deleteMealFromCache(mealId);
+      return const Right(null);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

@@ -7,4 +7,5 @@ abstract class DashboardRepo {
   Future<Either<Failure, UserEntity>> fetchUserProfile();
   Future<Either<Failure, List<MealEntity>>> fetchTodayMeals();
   Future<Either<Failure, void>> logMeal(MealEntity meal);
+  Future<Either<Failure, void>> deleteMeal(String mealId);
 }

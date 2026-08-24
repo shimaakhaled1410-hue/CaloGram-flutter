@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/widgets/custom_confirm_dialog.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_state.dart';
 import 'package:calogram_flutter/features/presentation/manager/profile/profile_cubit.dart';
@@ -190,55 +191,13 @@ class ProfileContent extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: theme.colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        title: Text(
-          'Logout',
-          style: AppTextStyles.font18SemiBoldWhite.copyWith(
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to logout?',
-          style: AppTextStyles.font14RegularMuted.copyWith(
-            color: isDark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Cancel',
-              style: AppTextStyles.font14RegularMuted.copyWith(
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<AuthCubit>().logout();
-            },
-            child: const Text('Logout', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+    CustomConfirmDialog.show(
+      context,
+      title: 'Logout',
+      content: 'Are you sure you want to sign out of your session?',
+      confirmText: 'Logout',
+      confirmButtonColor: const Color(0xFFEF4444),
+      onConfirm: () => context.read<AuthCubit>().logout(),
     );
   }
 }

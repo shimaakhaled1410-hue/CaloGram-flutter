@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/widgets/custom_confirm_dialog.dart';
 import 'package:calogram_flutter/features/presentation/dashboard/widgets/today_empty_state.dart';
 import 'package:calogram_flutter/features/presentation/dashboard/widgets/today_header_section.dart';
 import 'package:calogram_flutter/features/presentation/dashboard/widgets/today_meal_item.dart';
@@ -86,12 +87,65 @@ class TodayTabView extends StatelessWidget {
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           final meal = state.meals[index];
-                          return TodayMealItem(
-                            title: meal.title,
-                            details:
-                                'P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g',
-                            calories: '${meal.calories} kcal',
-                            icon: Icons.restaurant_rounded,
+                          final mealKey = meal.id.isNotEmpty
+                              ? meal.id
+                              : '$index-${meal.title}';
+
+                          return Dismissible(
+                            key: ValueKey(mealKey),
+                            direction: DismissDirection.endToStart,
+                            confirmDismiss: (direction) async {
+                              return await CustomConfirmDialog.show(
+                                context,
+                                title: 'Delete Meal',
+                                content:
+                                    'Are you sure you want to remove "${meal.title}" from today\'s log?',
+                                confirmText: 'Delete',
+                                confirmButtonColor: const Color(0xFFEF4444),
+                                onConfirm: () {},
+                              );
+                            },
+                            onDismissed: (direction) {
+                              context.read<DashboardCubit>().deleteMeal(
+                                meal.id,
+                              );
+                            },
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEF4444),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            child: TodayMealItem(
+                              title: meal.title,
+                              details:
+                                  'P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g',
+                              calories: '${meal.calories} kcal',
+                              icon: Icons.restaurant_rounded,
+                            ),
                           );
                         },
                       ),

@@ -22,6 +22,7 @@ import 'package:calogram_flutter/features/domain/usecases/auth/login_usecase.dar
 import 'package:calogram_flutter/features/domain/usecases/auth/logout_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/register_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/update_profile_metrics_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/dashboard/delete_meal_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/get_dashboard_data_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/log_meal_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/food_scanner/analyze_food_image_usecase.dart';
@@ -108,11 +109,13 @@ void setupServiceLocator() {
   sl.registerLazySingleton<LogMealUsecase>(
     () => LogMealUsecase(sl<DashboardRepo>()),
   );
+  sl.registerLazySingleton(() => DeleteMealUsecase(sl()));
 
   sl.registerFactory<DashboardCubit>(
     () => DashboardCubit(
       getDashboardDataUsecase: sl<GetDashboardDataUsecase>(),
       logMealUsecase: sl<LogMealUsecase>(),
+      deleteMealUsecase: sl<DeleteMealUsecase>(),
     ),
   );
 
