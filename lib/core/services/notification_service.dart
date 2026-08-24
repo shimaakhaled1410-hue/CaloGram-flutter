@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import '../router/app_router.dart';
+import '../router/app_routes.dart';
 
 class NotificationService {
   NotificationService._();
@@ -12,7 +15,6 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // Notification IDs
   static const int waterMorningId = 101;
   static const int waterAfternoonId = 102;
   static const int waterEveningId = 103;
@@ -24,8 +26,12 @@ class NotificationService {
   static const int dailyGoalCheckId = 301;
   static const int calorieLimitExceededId = 401;
 
+  bool get isSupportedPlatform =>
+      !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
   Future<void> init() async {
-    // 1. Initialize Timezones
+    if (!isSupportedPlatform) return;
+
     tz.initializeTimeZones();
     try {
       final dynamic currentTimeZone = await FlutterTimezone.getLocalTimezone();
@@ -55,14 +61,29 @@ class NotificationService {
     await _notificationsPlugin.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        debugPrint('Notification clicked with payload: ${response.payload}');
+        if (response.payload == 'dashboard') {
+          AppRouter.router.go(AppRoutes.dashboardScreen);
+        }
       },
     );
+
+    final NotificationAppLaunchDetails? launchDetails =
+        await _notificationsPlugin.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp ?? false) {
+      final payload = launchDetails?.notificationResponse?.payload;
+      if (payload == 'dashboard') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          AppRouter.router.go(AppRoutes.dashboardScreen);
+        });
+      }
+    }
 
     await requestPermissions();
   }
 
   Future<void> requestPermissions() async {
+    if (!isSupportedPlatform) return;
+
     if (Platform.isAndroid) {
       final androidImplementation = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -107,6 +128,8 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
+    if (!isSupportedPlatform) return;
+
     await _notificationsPlugin.show(
       id: id,
       title: title,
@@ -129,6 +152,8 @@ class NotificationService {
     required String channelName,
     String? payload,
   }) async {
+    if (!isSupportedPlatform) return;
+
     final tz.TZDateTime scheduledDate = _nextInstanceOfTime(time);
 
     await _notificationsPlugin.zonedSchedule(
@@ -148,10 +173,12 @@ class NotificationService {
   }
 
   Future<void> cancelNotification(int id) async {
+    if (!isSupportedPlatform) return;
     await _notificationsPlugin.cancel(id: id);
   }
 
   Future<void> cancelAllNotifications() async {
+    if (!isSupportedPlatform) return;
     await _notificationsPlugin.cancelAll();
   }
 

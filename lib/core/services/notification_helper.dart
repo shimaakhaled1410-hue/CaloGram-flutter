@@ -50,29 +50,32 @@ class NotificationHelper {
 
       await service.scheduleDailyNotification(
         id: NotificationService.waterMorningId,
-        title: '💧 Time to Hydrate!',
+        title: 'Time to Hydrate!',
         body: 'Start your morning strong with a fresh glass of water.',
         time: t1,
         channelId: 'water_reminders',
         channelName: 'Water Reminders',
+        payload: 'dashboard',
       );
 
       await service.scheduleDailyNotification(
         id: NotificationService.waterAfternoonId,
-        title: '💧 Afternoon Hydration Boost',
+        title: 'Afternoon Hydration Boost',
         body: 'Keep your energy high! Drink a glass of water now.',
         time: t2,
         channelId: 'water_reminders',
         channelName: 'Water Reminders',
+        payload: 'dashboard',
       );
 
       await service.scheduleDailyNotification(
         id: NotificationService.waterEveningId,
-        title: '💧 Evening Water Check',
+        title: 'Evening Water Check',
         body: 'Stay hydrated before your evening routine.',
         time: t3,
         channelId: 'water_reminders',
         channelName: 'Water Reminders',
+        payload: 'dashboard',
       );
     } else {
       await service.cancelNotification(NotificationService.waterMorningId);
@@ -89,11 +92,12 @@ class NotificationHelper {
       );
       await service.scheduleDailyNotification(
         id: NotificationService.breakfastId,
-        title: '🍳 Breakfast Time!',
+        title: 'Breakfast Time!',
         body: 'Fuel up for the day and remember to log your breakfast.',
         time: t,
         channelId: 'meal_reminders',
         channelName: 'Meal Reminders',
+        payload: 'dashboard',
       );
     } else {
       await service.cancelNotification(NotificationService.breakfastId);
@@ -108,11 +112,12 @@ class NotificationHelper {
       );
       await service.scheduleDailyNotification(
         id: NotificationService.lunchId,
-        title: '🥗 Healthy Lunch Break',
+        title: 'Healthy Lunch Break',
         body: 'Time for lunch! Keep track of your calories and macros.',
         time: t,
         channelId: 'meal_reminders',
         channelName: 'Meal Reminders',
+        payload: 'dashboard',
       );
     } else {
       await service.cancelNotification(NotificationService.lunchId);
@@ -127,11 +132,12 @@ class NotificationHelper {
       );
       await service.scheduleDailyNotification(
         id: NotificationService.dinnerId,
-        title: '🍽️ Dinner & Day Wrap-up',
+        title: 'Dinner & Day Wrap-up',
         body: 'Enjoy your dinner and check your remaining calorie target.',
         time: t,
         channelId: 'meal_reminders',
         channelName: 'Meal Reminders',
+        payload: 'dashboard',
       );
     } else {
       await service.cancelNotification(NotificationService.dinnerId);
@@ -155,6 +161,7 @@ class NotificationHelper {
           title: '⚠️ Calorie Target Exceeded!',
           body:
               'You have passed your target of $targetCalories kcal (Current: $totalCalories kcal). Balance with light activity!',
+          payload: 'dashboard',
         );
         await CacheHelper.setBool(key: alertKey, value: true);
       }
