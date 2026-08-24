@@ -6,7 +6,7 @@ import 'package:calogram_flutter/features/presentation/goal_setup/goal_setup_vie
 import 'package:calogram_flutter/features/presentation/onboarding/onboarding_view.dart';
 import 'package:calogram_flutter/features/presentation/profile/edit_profile_view.dart';
 import 'package:calogram_flutter/features/presentation/profile/settings_view.dart';
-import 'package:calogram_flutter/features/presentation/settings/notification_settings_view.dart';
+import 'package:calogram_flutter/features/presentation/notifications/notification_settings_view.dart';
 import 'package:calogram_flutter/features/presentation/settings/theme_selection_view.dart';
 import 'package:calogram_flutter/features/presentation/splash/splash_view.dart';
 import 'package:go_router/go_router.dart';

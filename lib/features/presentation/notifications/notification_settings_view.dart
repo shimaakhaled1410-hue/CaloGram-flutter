@@ -1,4 +1,11 @@
+import 'package:calogram_flutter/core/widgets/custom_gradient_button.dart';
+import 'package:calogram_flutter/core/widgets/in_app_notification.dart';
+import 'package:calogram_flutter/features/presentation/notifications/widgets/notification_card_container.dart';
+import 'package:calogram_flutter/features/presentation/notifications/widgets/notification_section_header.dart';
+import 'package:calogram_flutter/features/presentation/notifications/widgets/notification_time_tile.dart';
+import 'package:calogram_flutter/features/presentation/notifications/widgets/notification_toggle_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/cache_helper.dart';
 import '../../../../core/services/notification_helper.dart';
@@ -124,6 +131,14 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: theme.colorScheme.onSurface,
+            size: 20,
+          ),
+          onPressed: () => context.pop(),
+        ),
         title: Text(
           'Notification Settings',
           style: AppTextStyles.font20BoldWhite.copyWith(
@@ -134,12 +149,15 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         children: [
-          _buildSectionHeader('💧 Water Hydration', primaryAccent),
+          NotificationSectionHeader(
+            title: 'Water Hydration',
+            icon: Icons.water_drop_rounded,
+            color: primaryAccent,
+          ),
           const SizedBox(height: 8),
-          _buildCard(
-            isDark: isDark,
+          NotificationCardContainer(
             children: [
-              _buildToggleRow(
+              NotificationToggleTile(
                 title: 'Hydration Reminders',
                 subtitle: 'Get alerts to drink water regularly',
                 value: isWaterEnabled,
@@ -153,60 +171,73 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   await NotificationHelper.syncAllScheduledNotifications();
                 },
               ),
-              if (isWaterEnabled) ...[
-                const Divider(height: 1),
-                _buildTimeTile(
-                  label: 'Morning Water',
-                  time: waterMorning,
-                  onTap: () => _pickTime(
-                    initialTime: waterMorning,
-                    onSelected: (time) {
-                      waterMorning = time;
-                      CacheHelper.setString(
-                        key: AppConstants.notifWaterMorning,
-                        value: NotificationHelper.timeToString(time),
-                      );
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  height: 1,
+                  thickness: 0.6,
+                  color: isDark
+                      ? AppColors.inputBorderDark
+                      : AppColors.cardLightBorder,
                 ),
-                _buildTimeTile(
-                  label: 'Afternoon Water',
-                  time: waterAfternoon,
-                  onTap: () => _pickTime(
-                    initialTime: waterAfternoon,
-                    onSelected: (time) {
-                      waterAfternoon = time;
-                      CacheHelper.setString(
-                        key: AppConstants.notifWaterAfternoon,
-                        value: NotificationHelper.timeToString(time),
-                      );
-                    },
-                  ),
+              ),
+              NotificationTimeTile(
+                label: 'Morning Water',
+                time: waterMorning,
+                enabled: isWaterEnabled,
+                onTap: () => _pickTime(
+                  initialTime: waterMorning,
+                  onSelected: (time) {
+                    waterMorning = time;
+                    CacheHelper.setString(
+                      key: AppConstants.notifWaterMorning,
+                      value: NotificationHelper.timeToString(time),
+                    );
+                  },
                 ),
-                _buildTimeTile(
-                  label: 'Evening Water',
-                  time: waterEvening,
-                  onTap: () => _pickTime(
-                    initialTime: waterEvening,
-                    onSelected: (time) {
-                      waterEvening = time;
-                      CacheHelper.setString(
-                        key: AppConstants.notifWaterEvening,
-                        value: NotificationHelper.timeToString(time),
-                      );
-                    },
-                  ),
+              ),
+              NotificationTimeTile(
+                label: 'Afternoon Water',
+                time: waterAfternoon,
+                enabled: isWaterEnabled,
+                onTap: () => _pickTime(
+                  initialTime: waterAfternoon,
+                  onSelected: (time) {
+                    waterAfternoon = time;
+                    CacheHelper.setString(
+                      key: AppConstants.notifWaterAfternoon,
+                      value: NotificationHelper.timeToString(time),
+                    );
+                  },
                 ),
-              ],
+              ),
+              NotificationTimeTile(
+                label: 'Evening Water',
+                time: waterEvening,
+                enabled: isWaterEnabled,
+                onTap: () => _pickTime(
+                  initialTime: waterEvening,
+                  onSelected: (time) {
+                    waterEvening = time;
+                    CacheHelper.setString(
+                      key: AppConstants.notifWaterEvening,
+                      value: NotificationHelper.timeToString(time),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 24),
-          _buildSectionHeader('🥗 Meal Logging', primaryAccent),
+          NotificationSectionHeader(
+            title: 'Meal Logging',
+            icon: Icons.restaurant_rounded,
+            color: primaryAccent,
+          ),
           const SizedBox(height: 8),
-          _buildCard(
-            isDark: isDark,
+          NotificationCardContainer(
             children: [
-              _buildToggleRow(
+              NotificationToggleTile(
                 title: 'Breakfast Reminder',
                 subtitle: 'Reminder to fuel up and log breakfast',
                 value: isBreakfastEnabled,
@@ -220,23 +251,37 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   await NotificationHelper.syncAllScheduledNotifications();
                 },
               ),
-              if (isBreakfastEnabled)
-                _buildTimeTile(
-                  label: 'Breakfast Time',
-                  time: breakfastTime,
-                  onTap: () => _pickTime(
-                    initialTime: breakfastTime,
-                    onSelected: (time) {
-                      breakfastTime = time;
-                      CacheHelper.setString(
-                        key: AppConstants.notifBreakfastTime,
-                        value: NotificationHelper.timeToString(time),
-                      );
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  height: 1,
+                  thickness: 0.6,
+                  color: isDark
+                      ? AppColors.inputBorderDark
+                      : AppColors.cardLightBorder,
                 ),
-              const Divider(height: 1),
-              _buildToggleRow(
+              ),
+              NotificationTimeTile(
+                label: 'Breakfast Time',
+                time: breakfastTime,
+                enabled: isBreakfastEnabled,
+                onTap: () => _pickTime(
+                  initialTime: breakfastTime,
+                  onSelected: (time) {
+                    breakfastTime = time;
+                    CacheHelper.setString(
+                      key: AppConstants.notifBreakfastTime,
+                      value: NotificationHelper.timeToString(time),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          NotificationCardContainer(
+            children: [
+              NotificationToggleTile(
                 title: 'Lunch Reminder',
                 subtitle: 'Reminder to track your lunch & macros',
                 value: isLunchEnabled,
@@ -250,23 +295,37 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   await NotificationHelper.syncAllScheduledNotifications();
                 },
               ),
-              if (isLunchEnabled)
-                _buildTimeTile(
-                  label: 'Lunch Time',
-                  time: lunchTime,
-                  onTap: () => _pickTime(
-                    initialTime: lunchTime,
-                    onSelected: (time) {
-                      lunchTime = time;
-                      CacheHelper.setString(
-                        key: AppConstants.notifLunchTime,
-                        value: NotificationHelper.timeToString(time),
-                      );
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  height: 1,
+                  thickness: 0.6,
+                  color: isDark
+                      ? AppColors.inputBorderDark
+                      : AppColors.cardLightBorder,
                 ),
-              const Divider(height: 1),
-              _buildToggleRow(
+              ),
+              NotificationTimeTile(
+                label: 'Lunch Time',
+                time: lunchTime,
+                enabled: isLunchEnabled,
+                onTap: () => _pickTime(
+                  initialTime: lunchTime,
+                  onSelected: (time) {
+                    lunchTime = time;
+                    CacheHelper.setString(
+                      key: AppConstants.notifLunchTime,
+                      value: NotificationHelper.timeToString(time),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          NotificationCardContainer(
+            children: [
+              NotificationToggleTile(
                 title: 'Dinner Reminder',
                 subtitle: 'Check remaining calories for the day',
                 value: isDinnerEnabled,
@@ -280,92 +339,50 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   await NotificationHelper.syncAllScheduledNotifications();
                 },
               ),
-              if (isDinnerEnabled)
-                _buildTimeTile(
-                  label: 'Dinner Time',
-                  time: dinnerTime,
-                  onTap: () => _pickTime(
-                    initialTime: dinnerTime,
-                    onSelected: (time) {
-                      dinnerTime = time;
-                      CacheHelper.setString(
-                        key: AppConstants.notifDinnerTime,
-                        value: NotificationHelper.timeToString(time),
-                      );
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  height: 1,
+                  thickness: 0.6,
+                  color: isDark
+                      ? AppColors.inputBorderDark
+                      : AppColors.cardLightBorder,
                 ),
+              ),
+              NotificationTimeTile(
+                label: 'Dinner Time',
+                time: dinnerTime,
+                enabled: isDinnerEnabled,
+                onTap: () => _pickTime(
+                  initialTime: dinnerTime,
+                  onSelected: (time) {
+                    dinnerTime = time;
+                    CacheHelper.setString(
+                      key: AppConstants.notifDinnerTime,
+                      value: NotificationHelper.timeToString(time),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
+          const SizedBox(height: 32),
+          Center(
+            child: CustomGradientButton(
+              text: 'Send Test Notification',
+              onPressed: () {
+                InAppNotification.show(
+                  context,
+                  title: 'Hydration Time!',
+                  message: 'Drink water and stay on track today.',
+                  accentColor: primaryAccent,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
         ],
       ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, Color color) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: color,
-        letterSpacing: 0.5,
-      ),
-    );
-  }
-
-  Widget _buildCard({required bool isDark, required List<Widget> children}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
-      ),
-      child: Column(children: children),
-    );
-  }
-
-  Widget _buildToggleRow({
-    required String title,
-    required String subtitle,
-    required bool value,
-    required Color primaryAccent,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return SwitchListTile(
-      value: value,
-      onChanged: onChanged,
-      activeThumbColor: primaryAccent,
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
-      ),
-    );
-  }
-
-  Widget _buildTimeTile({
-    required String label,
-    required TimeOfDay time,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      title: Text(label, style: const TextStyle(fontSize: 14)),
-      trailing: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          time.format(context),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-        ),
-      ),
-      onTap: onTap,
     );
   }
 }
