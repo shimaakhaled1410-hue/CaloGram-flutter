@@ -38,44 +38,38 @@ class NotificationHelper {
     final isWaterEnabled =
         CacheHelper.getBool(key: AppConstants.notifWaterEnabled) ?? true;
     if (isWaterEnabled) {
-      final t1 = stringToTime(
-        CacheHelper.getString(key: AppConstants.notifWaterMorning),
-        defaultWaterMorning,
-      );
-      final t2 = stringToTime(
-        CacheHelper.getString(key: AppConstants.notifWaterAfternoon),
-        defaultWaterAfternoon,
-      );
-      final t3 = stringToTime(
-        CacheHelper.getString(key: AppConstants.notifWaterEvening),
-        defaultWaterEvening,
-      );
-
       await service.scheduleDailyNotification(
         id: NotificationService.waterMorningId,
         title: 'Time to Hydrate!',
         body: 'Start your morning strong with a fresh glass of water.',
-        time: t1,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifWaterMorning),
+          defaultWaterMorning,
+        ),
         channelId: 'water_reminders',
         channelName: 'Water Reminders',
         payload: 'dashboard',
       );
-
       await service.scheduleDailyNotification(
         id: NotificationService.waterAfternoonId,
         title: 'Afternoon Hydration Boost',
         body: 'Keep your energy high! Drink a glass of water now.',
-        time: t2,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifWaterAfternoon),
+          defaultWaterAfternoon,
+        ),
         channelId: 'water_reminders',
         channelName: 'Water Reminders',
         payload: 'dashboard',
       );
-
       await service.scheduleDailyNotification(
         id: NotificationService.waterEveningId,
         title: 'Evening Water Check',
         body: 'Stay hydrated before your evening routine.',
-        time: t3,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifWaterEvening),
+          defaultWaterEvening,
+        ),
         channelId: 'water_reminders',
         channelName: 'Water Reminders',
         payload: 'dashboard',
@@ -89,15 +83,14 @@ class NotificationHelper {
     final isBreakfastEnabled =
         CacheHelper.getBool(key: AppConstants.notifBreakfastEnabled) ?? true;
     if (isBreakfastEnabled) {
-      final t = stringToTime(
-        CacheHelper.getString(key: AppConstants.notifBreakfastTime),
-        defaultBreakfast,
-      );
       await service.scheduleDailyNotification(
         id: NotificationService.breakfastId,
         title: 'Breakfast Time!',
         body: 'Fuel up for the day and remember to log your breakfast.',
-        time: t,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifBreakfastTime),
+          defaultBreakfast,
+        ),
         channelId: 'meal_reminders',
         channelName: 'Meal Reminders',
         payload: 'dashboard',
@@ -109,15 +102,14 @@ class NotificationHelper {
     final isLunchEnabled =
         CacheHelper.getBool(key: AppConstants.notifLunchEnabled) ?? true;
     if (isLunchEnabled) {
-      final t = stringToTime(
-        CacheHelper.getString(key: AppConstants.notifLunchTime),
-        defaultLunch,
-      );
       await service.scheduleDailyNotification(
         id: NotificationService.lunchId,
         title: 'Healthy Lunch Break',
         body: 'Time for lunch! Keep track of your calories and macros.',
-        time: t,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifLunchTime),
+          defaultLunch,
+        ),
         channelId: 'meal_reminders',
         channelName: 'Meal Reminders',
         payload: 'dashboard',
@@ -129,15 +121,14 @@ class NotificationHelper {
     final isDinnerEnabled =
         CacheHelper.getBool(key: AppConstants.notifDinnerEnabled) ?? true;
     if (isDinnerEnabled) {
-      final t = stringToTime(
-        CacheHelper.getString(key: AppConstants.notifDinnerTime),
-        defaultDinner,
-      );
       await service.scheduleDailyNotification(
         id: NotificationService.dinnerId,
         title: 'Dinner & Day Wrap-up',
         body: 'Enjoy your dinner and check your remaining calorie target.',
-        time: t,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifDinnerTime),
+          defaultDinner,
+        ),
         channelId: 'meal_reminders',
         channelName: 'Meal Reminders',
         payload: 'dashboard',
@@ -151,119 +142,104 @@ class NotificationHelper {
 
   static void syncForegroundTimers() {
     cancelForegroundTimers();
-
     final now = DateTime.now();
 
-    void addTimer({
-      required bool isEnabled,
-      required TimeOfDay time,
-      required int id,
-      required String title,
-      required String body,
-    }) {
+    void scheduleOneShot(
+      bool isEnabled,
+      TimeOfDay time,
+      int id,
+      String title,
+      String body,
+    ) {
       if (!isEnabled) return;
-
-      var scheduledTime = DateTime(
+      var targetTime = DateTime(
         now.year,
         now.month,
         now.day,
         time.hour,
         time.minute,
       );
-
-      if (scheduledTime.isBefore(now)) {
-        scheduledTime = scheduledTime.add(const Duration(days: 1));
+      if (targetTime.isAfter(now)) {
+        final duration = targetTime.difference(now);
+        final timer = Timer(duration, () {
+          NotificationService.instance.showInstantNotification(
+            id: id,
+            title: title,
+            body: body,
+          );
+        });
+        _foregroundTimers.add(timer);
       }
-
-      final diff = scheduledTime.difference(now);
-
-      final timer = Timer(diff, () {
-        NotificationService.instance.showInstantNotification(
-          id: id,
-          title: title,
-          body: body,
-        );
-        syncForegroundTimers();
-      });
-
-      _foregroundTimers.add(timer);
     }
 
     final isWaterEnabled =
         CacheHelper.getBool(key: AppConstants.notifWaterEnabled) ?? true;
-    if (isWaterEnabled) {
-      addTimer(
-        isEnabled: isWaterEnabled,
-        time: stringToTime(
-          CacheHelper.getString(key: AppConstants.notifWaterMorning),
-          defaultWaterMorning,
-        ),
-        id: NotificationService.waterMorningId,
-        title: 'Time to Hydrate!',
-        body: 'Start your morning strong with a fresh glass of water.',
-      );
-      addTimer(
-        isEnabled: isWaterEnabled,
-        time: stringToTime(
-          CacheHelper.getString(key: AppConstants.notifWaterAfternoon),
-          defaultWaterAfternoon,
-        ),
-        id: NotificationService.waterAfternoonId,
-        title: 'Afternoon Hydration Boost',
-        body: 'Keep your energy high! Drink a glass of water now.',
-      );
-      addTimer(
-        isEnabled: isWaterEnabled,
-        time: stringToTime(
-          CacheHelper.getString(key: AppConstants.notifWaterEvening),
-          defaultWaterEvening,
-        ),
-        id: NotificationService.waterEveningId,
-        title: 'Evening Water Check',
-        body: 'Stay hydrated before your evening routine.',
-      );
-    }
+    scheduleOneShot(
+      isWaterEnabled,
+      stringToTime(
+        CacheHelper.getString(key: AppConstants.notifWaterMorning),
+        defaultWaterMorning,
+      ),
+      NotificationService.waterMorningId,
+      'Time to Hydrate!',
+      'Start your morning strong with a fresh glass of water.',
+    );
+    scheduleOneShot(
+      isWaterEnabled,
+      stringToTime(
+        CacheHelper.getString(key: AppConstants.notifWaterAfternoon),
+        defaultWaterAfternoon,
+      ),
+      NotificationService.waterAfternoonId,
+      'Afternoon Hydration Boost',
+      'Keep your energy high! Drink a glass of water now.',
+    );
+    scheduleOneShot(
+      isWaterEnabled,
+      stringToTime(
+        CacheHelper.getString(key: AppConstants.notifWaterEvening),
+        defaultWaterEvening,
+      ),
+      NotificationService.waterEveningId,
+      'Evening Water Check',
+      'Stay hydrated before your evening routine.',
+    );
 
-    addTimer(
-      isEnabled:
-          CacheHelper.getBool(key: AppConstants.notifBreakfastEnabled) ?? true,
-      time: stringToTime(
+    scheduleOneShot(
+      CacheHelper.getBool(key: AppConstants.notifBreakfastEnabled) ?? true,
+      stringToTime(
         CacheHelper.getString(key: AppConstants.notifBreakfastTime),
         defaultBreakfast,
       ),
-      id: NotificationService.breakfastId,
-      title: 'Breakfast Time!',
-      body: 'Fuel up for the day and remember to log your breakfast.',
+      NotificationService.breakfastId,
+      'Breakfast Time!',
+      'Fuel up for the day and remember to log your breakfast.',
     );
-
-    addTimer(
-      isEnabled:
-          CacheHelper.getBool(key: AppConstants.notifLunchEnabled) ?? true,
-      time: stringToTime(
+    scheduleOneShot(
+      CacheHelper.getBool(key: AppConstants.notifLunchEnabled) ?? true,
+      stringToTime(
         CacheHelper.getString(key: AppConstants.notifLunchTime),
         defaultLunch,
       ),
-      id: NotificationService.lunchId,
-      title: 'Healthy Lunch Break',
-      body: 'Time for lunch! Keep track of your calories and macros.',
+      NotificationService.lunchId,
+      'Healthy Lunch Break',
+      'Time for lunch! Keep track of your calories and macros.',
     );
-
-    addTimer(
-      isEnabled:
-          CacheHelper.getBool(key: AppConstants.notifDinnerEnabled) ?? true,
-      time: stringToTime(
+    scheduleOneShot(
+      CacheHelper.getBool(key: AppConstants.notifDinnerEnabled) ?? true,
+      stringToTime(
         CacheHelper.getString(key: AppConstants.notifDinnerTime),
         defaultDinner,
       ),
-      id: NotificationService.dinnerId,
-      title: 'Dinner & Day Wrap-up',
-      body: 'Enjoy your dinner and check your remaining calorie target.',
+      NotificationService.dinnerId,
+      'Dinner & Day Wrap-up',
+      'Enjoy your dinner and check your remaining calorie target.',
     );
   }
 
   static void cancelForegroundTimers() {
-    for (var t in _foregroundTimers) {
-      t.cancel();
+    for (var timer in _foregroundTimers) {
+      timer.cancel();
     }
     _foregroundTimers.clear();
   }

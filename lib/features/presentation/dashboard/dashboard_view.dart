@@ -1,4 +1,5 @@
 import 'package:calogram_flutter/core/services/notification_helper.dart';
+import 'package:calogram_flutter/core/services/notification_service.dart';
 import 'package:calogram_flutter/features/presentation/food_scanner/food_scanner_view.dart';
 import 'package:calogram_flutter/features/presentation/profile/profile_view.dart';
 import 'package:calogram_flutter/features/presentation/smart_fridge/smart_fridge_view.dart';
@@ -17,7 +18,8 @@ class DashboardView extends StatefulWidget {
   State<DashboardView> createState() => _DashboardViewState();
 }
 
-class _DashboardViewState extends State<DashboardView> {
+class _DashboardViewState extends State<DashboardView>
+    with WidgetsBindingObserver {
   int _currentIndex = 0;
 
   final List<Widget> _tabs = const [
@@ -31,13 +33,36 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   void initState() {
     super.initState();
-    NotificationHelper.syncForegroundTimers();
+    WidgetsBinding.instance.addObserver(this);
+    _setupForegroundNotifications();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     NotificationHelper.cancelForegroundTimers();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _setupForegroundNotifications();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      _setupBackgroundNotifications();
+    }
+  }
+
+  void _setupForegroundNotifications() {
+    NotificationService.instance.cancelAllNotifications();
+    NotificationHelper.syncForegroundTimers();
+  }
+
+  void _setupBackgroundNotifications() {
+    NotificationHelper.cancelForegroundTimers();
+    NotificationHelper.syncAllScheduledNotifications();
   }
 
   @override

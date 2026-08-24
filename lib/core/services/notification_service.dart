@@ -191,7 +191,7 @@ class NotificationService {
           channelName: channelName,
           channelDescription: 'Daily scheduled reminders with sound',
         ),
-        androidScheduleMode: AndroidScheduleMode.alarmClock,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
         payload: payload,
       );
