@@ -7,7 +7,10 @@ class NotificationHelper {
   NotificationHelper._();
 
   static const TimeOfDay defaultWaterMorning = TimeOfDay(hour: 10, minute: 0);
-  static const TimeOfDay defaultWaterAfternoon = TimeOfDay(hour: 14, minute: 30);
+  static const TimeOfDay defaultWaterAfternoon = TimeOfDay(
+    hour: 14,
+    minute: 30,
+  );
   static const TimeOfDay defaultWaterEvening = TimeOfDay(hour: 19, minute: 0);
 
   static const TimeOfDay defaultBreakfast = TimeOfDay(hour: 9, minute: 0);
