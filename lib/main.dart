@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:calogram_flutter/core/router/app_router.dart';
+import 'package:calogram_flutter/core/services/notification_service.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/theme/theme_cubit.dart';
 import 'package:calogram_flutter/firebase_options.dart';
@@ -19,6 +20,11 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CacheHelper.init();
   setupServiceLocator();
+
+  final bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+  if (isMobile) {
+    await NotificationService.instance.init();
+  }
 
   final bool isDesktopOrWeb =
       kIsWeb || (!Platform.isAndroid && !Platform.isIOS);
