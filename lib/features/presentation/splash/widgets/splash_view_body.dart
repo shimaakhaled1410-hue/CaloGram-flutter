@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/services/cache_helper.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../core/widgets/app_logo.dart';
 
 class SplashViewBody extends StatefulWidget {
   const SplashViewBody({super.key});
@@ -84,26 +85,7 @@ class _SplashViewBodyState extends State<SplashViewBody>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryLimeGradient,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryNeonLime.withValues(alpha: 0.35),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.bolt_rounded,
-                  size: 52,
-                  color: AppColors.backgroundDark,
-                ),
-              ),
+              const AppLogo(size: 100, showGlow: true),
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

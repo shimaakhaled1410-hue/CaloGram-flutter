@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_text_form_field.dart';
 import 'selectable_card.dart';
@@ -111,20 +112,34 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Personalize Your Plan',
-                    style: AppTextStyles.font24BoldWhite.copyWith(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'AI uses these metrics to accurately calculate your daily macros & targets.',
-                    style: AppTextStyles.font14RegularMuted.copyWith(
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Personalize Your Plan',
+                              style: AppTextStyles.font24BoldWhite.copyWith(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'AI uses these metrics to accurately calculate your daily macros & targets.',
+                              style: AppTextStyles.font12MediumMuted.copyWith(
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const AppLogo(size: 48, showGlow: false),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -260,9 +275,9 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                   const SizedBox(height: 32),
                   CustomGradientButton(
                     showAiIcon: true,
-                    text: isLoading
-                        ? 'Calculating Plan...'
-                        : 'Calculate My Plan & Continue',
+                    isLoading: isLoading,
+                    loadingText: 'Calculating Plan...',
+                    text: 'Calculate My Plan & Continue',
                     onPressed: isLoading ? () {} : _calculateAndSubmit,
                   ),
                   const SizedBox(height: 16),

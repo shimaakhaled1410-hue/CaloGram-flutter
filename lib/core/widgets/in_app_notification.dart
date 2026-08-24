@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../router/app_router.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
@@ -15,7 +16,12 @@ class InAppNotification {
     VoidCallback? onTap,
     Duration duration = const Duration(seconds: 4),
   }) {
-    final overlay = Overlay.of(context);
+    final OverlayState? overlay =
+        Overlay.maybeOf(context) ??
+        AppRouter.navigatorKey.currentState?.overlay;
+
+    if (overlay == null) return;
+
     late OverlayEntry entry;
 
     final theme = Theme.of(context);
@@ -32,10 +38,16 @@ class InAppNotification {
         accentColor: color,
         isDark: isDark,
         onTap: () {
-          entry.remove();
+          if (entry.mounted) {
+            entry.remove();
+          }
           onTap?.call();
         },
-        onDismiss: () => entry.remove(),
+        onDismiss: () {
+          if (entry.mounted) {
+            entry.remove();
+          }
+        },
         duration: duration,
       ),
     );
@@ -95,7 +107,11 @@ class _InAppNotificationWidgetState extends State<_InAppNotificationWidget>
 
     Future.delayed(widget.duration, () {
       if (mounted) {
-        _controller.reverse().then((_) => widget.onDismiss());
+        _controller.reverse().then((_) {
+          if (mounted) {
+            widget.onDismiss();
+          }
+        });
       }
     });
   }

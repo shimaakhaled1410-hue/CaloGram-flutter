@@ -67,7 +67,7 @@ class CalorieProgressCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  isOverTarget ? 'kcal over target ⚠️' : 'kcal remaining',
+                  isOverTarget ? 'kcal over target' : 'kcal remaining',
                   style: AppTextStyles.font14MediumWhite.copyWith(
                     color: isOverTarget
                         ? AppColors.error

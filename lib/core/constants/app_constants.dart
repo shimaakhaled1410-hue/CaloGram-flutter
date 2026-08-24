@@ -21,4 +21,6 @@ class AppConstants {
 
   static const String notifDinnerEnabled = 'notif_dinner_enabled';
   static const String notifDinnerTime = 'notif_dinner_time';
+
+  static const String logo = 'assets/images/logo.png';
 }

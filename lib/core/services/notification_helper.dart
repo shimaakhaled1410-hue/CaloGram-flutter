@@ -158,7 +158,7 @@ class NotificationHelper {
       if (!alreadySentToday) {
         await NotificationService.instance.showInstantNotification(
           id: NotificationService.calorieLimitExceededId,
-          title: '⚠️ Calorie Target Exceeded!',
+          title: 'Calorie Target Exceeded!',
           body:
               'You have passed your target of $targetCalories kcal (Current: $totalCalories kcal). Balance with light activity!',
           payload: 'dashboard',

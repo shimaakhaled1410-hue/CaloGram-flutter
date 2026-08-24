@@ -8,6 +8,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../utils/app_regex.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_text_form_field.dart';
 
@@ -65,44 +66,26 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Center(child: AppLogo(size: 76, showGlow: true)),
+                    const SizedBox(height: 28),
                     Center(
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryLimeGradient,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryNeonLime.withValues(
-                                alpha: 0.3,
-                              ),
-                              blurRadius: 20,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                      child: Text(
+                        'Welcome Back!',
+                        style: AppTextStyles.font28BoldWhite.copyWith(
+                          color: theme.colorScheme.onSurface,
                         ),
-                        child: const Icon(
-                          Icons.bolt_rounded,
-                          size: 40,
-                          color: AppColors.backgroundDark,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(
-                      'Welcome Back!',
-                      style: AppTextStyles.font28BoldWhite.copyWith(
-                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Track calories, scan meals & achieve your goals.',
-                      style: AppTextStyles.font14RegularMuted.copyWith(
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
+                    Center(
+                      child: Text(
+                        'Track calories, scan meals & achieve your goals.',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.font14RegularMuted.copyWith(
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -156,7 +139,6 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 12),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -171,9 +153,10 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     CustomGradientButton(
-                      text: isLoginLoading ? 'Logging In...' : 'Log In',
+                      text: 'Log In',
+                      loadingText: 'Logging In...',
                       isLoading: isLoginLoading,
                       onPressed: isAnyLoading
                           ? () {}

@@ -4,6 +4,7 @@ import '../theme/app_text_styles.dart';
 
 class CustomGradientButton extends StatelessWidget {
   final String text;
+  final String? loadingText;
   final VoidCallback onPressed;
   final bool isLoading;
   final bool showAiIcon;
@@ -12,6 +13,7 @@ class CustomGradientButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
+    this.loadingText,
     this.isLoading = false,
     this.showAiIcon = false,
   });
@@ -46,14 +48,21 @@ class CustomGradientButton extends StatelessWidget {
           onTap: isLoading ? null : onPressed,
           child: Center(
             child: isLoading
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: onGradientColor,
-                      strokeWidth: 2.5,
-                    ),
-                  )
+                ? (loadingText != null
+                      ? Text(
+                          loadingText!,
+                          style: AppTextStyles.font16BoldDark.copyWith(
+                            color: onGradientColor,
+                          ),
+                        )
+                      : SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: onGradientColor,
+                            strokeWidth: 2.5,
+                          ),
+                        ))
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,

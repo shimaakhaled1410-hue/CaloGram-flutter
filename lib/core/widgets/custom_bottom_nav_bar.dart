@@ -171,27 +171,28 @@ class CustomBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onItemTapped(4),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 6),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: AppColors.primaryLimeGradient,
           shape: BoxShape.circle,
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.25),
-            width: 2,
+            width: 1.8,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryNeonLime.withValues(alpha: 0.45),
-              blurRadius: 20,
-              spreadRadius: 1,
-              offset: const Offset(0, 6),
+              color: AppColors.primaryNeonLime.withValues(alpha: 0.4),
+              blurRadius: 16,
+              spreadRadius: 0.5,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: const Icon(
           Icons.camera_alt_rounded,
           color: AppColors.backgroundDark,
-          size: 26,
+          size: 24,
         ),
       ),
     );

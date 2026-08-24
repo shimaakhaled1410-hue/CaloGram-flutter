@@ -24,8 +24,9 @@ void main() async {
 
   final bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
   if (isMobile) {
-    await NotificationService.instance.init();
-    await NotificationHelper.syncAllScheduledNotifications();
+    NotificationService.instance.init().then((_) {
+      NotificationHelper.syncAllScheduledNotifications();
+    });
   }
 
   final bool isDesktopOrWeb =

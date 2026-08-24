@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../core/widgets/app_logo.dart';
 import 'register_form.dart';
 import 'terms_and_conditions_text.dart';
 
@@ -20,6 +21,8 @@ class RegisterViewBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Center(child: AppLogo(size: 70, showGlow: true)),
+              const SizedBox(height: 24),
               Center(
                 child: Text(
                   'Create Account',
@@ -29,12 +32,15 @@ class RegisterViewBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Start your smart AI nutrition journey today.',
-                style: AppTextStyles.font14RegularMuted.copyWith(
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
+              Center(
+                child: Text(
+                  'Start your smart AI nutrition journey today.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.font14RegularMuted.copyWith(
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                  ),
                 ),
               ),
               const SizedBox(height: 32),

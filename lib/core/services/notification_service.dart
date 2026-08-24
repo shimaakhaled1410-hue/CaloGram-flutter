@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import '../widgets/in_app_notification.dart';
 import '../router/app_router.dart';
 import '../router/app_routes.dart';
 
@@ -26,21 +27,29 @@ class NotificationService {
   static const int dailyGoalCheckId = 301;
   static const int calorieLimitExceededId = 401;
 
+  static const String _customSoundName = 'notification_sound';
+
   bool get isSupportedPlatform =>
       !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
   Future<void> init() async {
-    if (!isSupportedPlatform) return;
+    if (!isSupportedPlatform) {
+      return;
+    }
 
-    tz.initializeTimeZones();
     try {
-      final dynamic currentTimeZone = await FlutterTimezone.getLocalTimezone();
-      final String timeZoneName = currentTimeZone is String
-          ? currentTimeZone
-          : currentTimeZone.name ?? 'Africa/Cairo';
+      tz.initializeTimeZones();
+      final dynamic tzResult = await FlutterTimezone.getLocalTimezone();
+
+      final String timeZoneName = tzResult is String
+          ? tzResult
+          : (tzResult?.identifier ?? 'Africa/Cairo');
+
       tz.setLocalLocation(tz.getLocation(timeZoneName));
     } catch (_) {
-      tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+      try {
+        tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+      } catch (_) {}
     }
 
     const AndroidInitializationSettings androidSettings =
@@ -67,28 +76,20 @@ class NotificationService {
       },
     );
 
-    final NotificationAppLaunchDetails? launchDetails =
-        await _notificationsPlugin.getNotificationAppLaunchDetails();
-    if (launchDetails?.didNotificationLaunchApp ?? false) {
-      final payload = launchDetails?.notificationResponse?.payload;
-      if (payload == 'dashboard') {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          AppRouter.router.go(AppRoutes.dashboardScreen);
-        });
-      }
-    }
-
     await requestPermissions();
   }
 
   Future<void> requestPermissions() async {
-    if (!isSupportedPlatform) return;
+    if (!isSupportedPlatform) {
+      return;
+    }
 
     if (Platform.isAndroid) {
       final androidImplementation = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >();
+
       await androidImplementation?.requestNotificationsPermission();
       await androidImplementation?.requestExactAlarmsPermission();
     } else if (Platform.isIOS) {
@@ -112,12 +113,16 @@ class NotificationService {
         channelDescription: channelDescription,
         importance: Importance.max,
         priority: Priority.high,
+        playSound: true,
+        enableVibration: true,
+        sound: const RawResourceAndroidNotificationSound(_customSoundName),
         icon: '@mipmap/ic_launcher',
       ),
       iOS: const DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
         presentSound: true,
+        sound: '$_customSoundName.mp3',
       ),
     );
   }
@@ -128,19 +133,29 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
-    if (!isSupportedPlatform) return;
+    if (!isSupportedPlatform) {
+      return;
+    }
 
-    await _notificationsPlugin.show(
-      id: id,
-      title: title,
-      body: body,
-      notificationDetails: _notificationDetails(
-        channelId: 'instant_notifications',
-        channelName: 'Instant Alerts',
-        channelDescription: 'Real-time quick reminders',
-      ),
-      payload: payload,
-    );
+    final context = AppRouter.navigatorKey.currentContext;
+
+    if (context != null && context.mounted) {
+      InAppNotification.show(context, title: title, message: body);
+    } else {
+      try {
+        await _notificationsPlugin.show(
+          id: id,
+          title: title,
+          body: body,
+          notificationDetails: _notificationDetails(
+            channelId: 'calogram_instant_alerts_sound_v1',
+            channelName: 'Instant Alerts',
+            channelDescription: 'Real-time quick reminders with sound',
+          ),
+          payload: payload,
+        );
+      } catch (_) {}
+    }
   }
 
   Future<void> scheduleDailyNotification({
@@ -152,24 +167,28 @@ class NotificationService {
     required String channelName,
     String? payload,
   }) async {
-    if (!isSupportedPlatform) return;
+    if (!isSupportedPlatform) {
+      return;
+    }
 
     final tz.TZDateTime scheduledDate = _nextInstanceOfTime(time);
 
-    await _notificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: scheduledDate,
-      notificationDetails: _notificationDetails(
-        channelId: channelId,
-        channelName: channelName,
-        channelDescription: 'Daily scheduled reminders',
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
-      payload: payload,
-    );
+    try {
+      await _notificationsPlugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        notificationDetails: _notificationDetails(
+          channelId: '${channelId}_sound_v1',
+          channelName: channelName,
+          channelDescription: 'Daily scheduled reminders with sound',
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: payload,
+      );
+    } catch (_) {}
   }
 
   Future<void> cancelNotification(int id) async {

@@ -123,7 +123,9 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               const SizedBox(height: 28),
               CustomGradientButton(
-                text: isLoading ? 'Creating Account...' : 'Create Account',
+                text: 'Create Account',
+                isLoading: isLoading,
+                loadingText: 'Creating Account...',
                 onPressed: isLoading
                     ? () {}
                     : () {

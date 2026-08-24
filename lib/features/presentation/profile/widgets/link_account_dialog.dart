@@ -140,7 +140,8 @@ class _LinkAccountDialogState extends State<LinkAccountDialog> {
                   ],
                   const SizedBox(height: 20),
                   CustomGradientButton(
-                    text: isLoading ? 'Creating Account...' : 'Create Account',
+                    text: 'Create Account',
+                    loadingText: 'Creating Account...',
                     isLoading: isLoading,
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {

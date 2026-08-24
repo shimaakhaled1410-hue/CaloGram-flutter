@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import '../../../../../../core/theme/app_text_styles.dart';
+import '../../../../../../core/widgets/app_logo.dart';
 
 class TodayHeaderSection extends StatelessWidget {
   final String userName;
@@ -16,39 +17,48 @@ class TodayHeaderSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Text(
-                'Hello, ${userName.isNotEmpty ? userName : 'Champion'}!',
-                style: AppTextStyles.font24BoldWhite.copyWith(
-                  color: theme.colorScheme.onSurface,
+              const AppLogo(size: 40, showGlow: false),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hello, ${userName.isNotEmpty ? userName : 'Champion'}!',
+                      style: AppTextStyles.font20BoldWhite.copyWith(
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Track every bite and reach your target.',
+                      style: AppTextStyles.font12MediumMuted.copyWith(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Track every bite and reach your target.',
-                style: AppTextStyles.font14RegularMuted.copyWith(
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         CircleAvatar(
-          radius: 22,
+          radius: 20,
           backgroundColor: isDark
               ? AppColors.cardDarkElevated
               : AppColors.cardLightElevated,
           child: Icon(
             Icons.notifications_none_rounded,
+            size: 20,
             color: theme.colorScheme.onSurface,
           ),
         ),

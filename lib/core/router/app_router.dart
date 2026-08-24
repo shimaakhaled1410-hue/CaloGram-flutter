@@ -9,10 +9,15 @@ import 'package:calogram_flutter/features/presentation/profile/settings_view.dar
 import 'package:calogram_flutter/features/presentation/notifications/notification_settings_view.dart';
 import 'package:calogram_flutter/features/presentation/settings/theme_selection_view.dart';
 import 'package:calogram_flutter/features/presentation/splash/splash_view.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 abstract class AppRouter {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: AppRoutes.splashScreen,
     routes: [
       GoRoute(
