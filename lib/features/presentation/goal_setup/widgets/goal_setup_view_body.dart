@@ -259,6 +259,7 @@ class _GoalSetupViewBodyState extends State<GoalSetupViewBody> {
                   ),
                   const SizedBox(height: 32),
                   CustomGradientButton(
+                    showAiIcon: true,
                     text: isLoading
                         ? 'Calculating Plan...'
                         : 'Calculate My Plan & Continue',

@@ -1,6 +1,8 @@
+import 'package:calogram_flutter/features/domain/usecases/auth/link_guest_account_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/login_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/logout_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/register_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/sign_in_as_guest_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/update_profile_metrics_usecase.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,12 +10,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AuthCubit extends Cubit<AuthState> {
   final LoginUsecase loginUsecase;
   final RegisterUsecase registerUsecase;
+  final SignInAsGuestUseCase signInAsGuestUseCase;
+  final LinkGuestAccountUseCase linkGuestAccountUseCase;
   final UpdateProfileMetricsUsecase updateProfileMetricsUsecase;
   final LogoutUsecase logoutUsecase;
 
   AuthCubit({
     required this.loginUsecase,
     required this.registerUsecase,
+    required this.signInAsGuestUseCase,
+    required this.linkGuestAccountUseCase,
     required this.updateProfileMetricsUsecase,
     required this.logoutUsecase,
   }) : super(AuthInitial());
@@ -81,6 +87,32 @@ class AuthCubit extends Cubit<AuthState> {
     result.fold(
       (failure) => emit(LogoutErrorState(failure.errMessage)),
       (_) => emit(LogoutSuccessState()),
+    );
+  }
+
+  Future<void> signInAsGuest() async {
+    emit(GuestLoginLoadingState());
+    final result = await signInAsGuestUseCase();
+    result.fold(
+      (failure) => emit(LoginErrorState(failure.errMessage)),
+      (user) => emit(GuestLoginSuccessState(user)),
+    );
+  }
+
+  Future<void> linkAccount({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    emit(LinkAccountLoadingState());
+    final result = await linkGuestAccountUseCase(
+      name: name,
+      email: email,
+      password: password,
+    );
+    result.fold(
+      (failure) => emit(RegisterErrorState(failure.errMessage)),
+      (user) => emit(LinkAccountSuccessState(user)),
     );
   }
 }

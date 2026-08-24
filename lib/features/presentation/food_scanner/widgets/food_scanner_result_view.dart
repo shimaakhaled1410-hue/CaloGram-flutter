@@ -93,6 +93,7 @@ class FoodScannerResultView extends StatelessWidget {
           const SizedBox(height: 24),
           CustomGradientButton(
             text: 'Confirm & Log Meal',
+            showAiIcon: true,
             onPressed: () {
               context.read<FoodScannerCubit>().saveScannedMeal(
                 title: food.foodName,

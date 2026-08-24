@@ -181,4 +181,80 @@ class AuthRepoImpl implements AuthRepo {
       return Left(ServerFailure('Failed to sign out'));
     }
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> signInAsGuest() async {
+    try {
+      final user = await remoteDataSource.signInAnonymously();
+      await CacheHelper.setString(
+        key: AppConstants.cachedUserToken,
+        value: user.uId,
+      );
+      await CacheHelper.setBool(key: AppConstants.isGuestUser, value: true);
+
+      final profileMap = {
+        'name': 'Guest User',
+        'currentWeight': 70.0,
+        'height': 175.0,
+        'targetWeight': 70.0,
+        'targetCalories': 2000,
+        'targetProtein': 140,
+        'targetCarbs': 200,
+        'targetFats': 65,
+      };
+      await CacheHelper.setString(
+        key: AppConstants.cachedUserProfile,
+        value: jsonEncode(profileMap),
+      );
+
+      return Right(user);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to sign in as guest'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> linkGuestAccount({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final user = await remoteDataSource.linkAccountWithEmail(
+        name: name,
+        email: email,
+        password: password,
+      );
+
+      await CacheHelper.setBool(key: AppConstants.isGuestUser, value: false);
+
+      final cachedProfileStr = CacheHelper.getString(
+        key: AppConstants.cachedUserProfile,
+      );
+      if (cachedProfileStr != null && cachedProfileStr.isNotEmpty) {
+        final Map<String, dynamic> profileMap = jsonDecode(cachedProfileStr);
+        profileMap['name'] = user.name;
+        await CacheHelper.setString(
+          key: AppConstants.cachedUserProfile,
+          value: jsonEncode(profileMap),
+        );
+      }
+
+      return Right(user);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (_) {
+      return Left(ServerFailure('Failed to upgrade account'));
+    }
+  }
 }

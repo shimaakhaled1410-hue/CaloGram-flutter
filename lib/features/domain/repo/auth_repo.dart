@@ -14,6 +14,14 @@ abstract class AuthRepo {
     required String password,
   });
 
+  Future<Either<Failure, UserEntity>> signInAsGuest();
+
+  Future<Either<Failure, UserEntity>> linkGuestAccount({
+    required String name,
+    required String email,
+    required String password,
+  });
+
   Future<Either<Failure, UserEntity>> updateProfileMetrics({
     required String gender,
     required int age,

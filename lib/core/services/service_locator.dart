@@ -18,9 +18,11 @@ import 'package:calogram_flutter/features/domain/repo/food_scanner_repo.dart';
 import 'package:calogram_flutter/features/domain/repo/profile_repo.dart';
 import 'package:calogram_flutter/features/domain/repo/smart_fridge_repo.dart';
 import 'package:calogram_flutter/features/domain/repo/voice_logger_repo.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/link_guest_account_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/login_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/logout_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/register_usecase.dart';
+import 'package:calogram_flutter/features/domain/usecases/auth/sign_in_as_guest_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/auth/update_profile_metrics_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/delete_meal_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/get_dashboard_data_usecase.dart';
@@ -68,6 +70,8 @@ void setupServiceLocator() {
   sl.registerLazySingleton<RegisterUsecase>(
     () => RegisterUsecase(sl<AuthRepo>()),
   );
+  sl.registerLazySingleton(() => SignInAsGuestUseCase(sl()));
+  sl.registerLazySingleton(() => LinkGuestAccountUseCase(sl()));
   sl.registerLazySingleton<UpdateProfileMetricsUsecase>(
     () => UpdateProfileMetricsUsecase(sl<AuthRepo>()),
   );
@@ -78,6 +82,8 @@ void setupServiceLocator() {
     () => AuthCubit(
       loginUsecase: sl<LoginUsecase>(),
       registerUsecase: sl<RegisterUsecase>(),
+      signInAsGuestUseCase: sl(),
+      linkGuestAccountUseCase: sl(),
       updateProfileMetricsUsecase: sl<UpdateProfileMetricsUsecase>(),
       logoutUsecase: sl<LogoutUsecase>(),
     ),

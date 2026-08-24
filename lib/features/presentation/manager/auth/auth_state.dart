@@ -52,3 +52,18 @@ class LogoutErrorState extends AuthState {
   final String errMessage;
   LogoutErrorState(this.errMessage);
 }
+
+// guest
+class GuestLoginLoadingState extends AuthState {}
+
+class GuestLoginSuccessState extends AuthState {
+  final UserEntity user;
+  GuestLoginSuccessState(this.user);
+}
+
+class LinkAccountLoadingState extends AuthState {}
+
+class LinkAccountSuccessState extends AuthState {
+  final UserEntity user;
+  LinkAccountSuccessState(this.user);
+}

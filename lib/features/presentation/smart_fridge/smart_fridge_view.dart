@@ -93,6 +93,7 @@ class _SmartFridgeContentState extends State<_SmartFridgeContent> {
               ],
               CustomGradientButton(
                 text: 'Generate AI Recipes',
+                showAiIcon: true,
                 isLoading: state is SmartFridgeLoading,
                 onPressed: () => cubit.generateRecipes(),
               ),

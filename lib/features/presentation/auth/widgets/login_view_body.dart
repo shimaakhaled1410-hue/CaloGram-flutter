@@ -4,9 +4,7 @@ import 'package:calogram_flutter/features/presentation/manager/auth/auth_state.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/cache_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../utils/app_regex.dart';
@@ -33,12 +31,6 @@ class _LoginViewBodyState extends State<LoginViewBody> {
     super.dispose();
   }
 
-  Future<void> _continueAsGuest() async {
-    await CacheHelper.setBool(key: AppConstants.isGuestUser, value: true);
-    if (!mounted) return;
-    context.go(AppRoutes.goalSetupScreen);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -52,12 +44,17 @@ class _LoginViewBodyState extends State<LoginViewBody> {
             message: 'Logged in successfully!',
           );
           context.go(AppRoutes.dashboardScreen);
+        } else if (state is GuestLoginSuccessState) {
+          CustomSnackBar.showSuccess(context, message: 'Signed in as Guest!');
+          context.go(AppRoutes.goalSetupScreen);
         } else if (state is LoginErrorState) {
           CustomSnackBar.showError(context, message: state.errMessage);
         }
       },
       builder: (context, state) {
-        final bool isLoading = state is LoginLoadingState;
+        final bool isLoginLoading = state is LoginLoadingState;
+        final bool isGuestLoading = state is GuestLoginLoadingState;
+        final bool isAnyLoading = isLoginLoading || isGuestLoading;
 
         return SafeArea(
           child: Center(
@@ -176,8 +173,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                     ),
                     const SizedBox(height: 24),
                     CustomGradientButton(
-                      text: isLoading ? 'Logging In...' : 'Log In',
-                      onPressed: isLoading
+                      text: isLoginLoading ? 'Logging In...' : 'Log In',
+                      isLoading: isLoginLoading,
+                      onPressed: isAnyLoading
                           ? () {}
                           : () {
                               if (_formKey.currentState!.validate()) {
@@ -193,7 +191,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                       width: double.infinity,
                       height: 56,
                       child: OutlinedButton(
-                        onPressed: isLoading ? null : _continueAsGuest,
+                        onPressed: isAnyLoading
+                            ? null
+                            : () => context.read<AuthCubit>().signInAsGuest(),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
                             color: isDark
@@ -205,12 +205,23 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text(
-                          'Continue as Guest',
-                          style: AppTextStyles.font14MediumWhite.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
+                        child: isGuestLoading
+                            ? SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.2,
+                                  color: isDark
+                                      ? AppColors.primaryNeonLime
+                                      : AppColors.primaryLimeDark,
+                                ),
+                              )
+                            : Text(
+                                'Sign In as Guest',
+                                style: AppTextStyles.font14MediumWhite.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 32),

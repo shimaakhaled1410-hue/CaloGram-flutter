@@ -12,6 +12,7 @@ class VoiceConfirmButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomGradientButton(
       text: 'Confirm & Log Meal',
+      showAiIcon: true,
       onPressed: () {
         context.read<VoiceLoggerCubit>().saveVoiceMeal(
           title: state.food.foodName,

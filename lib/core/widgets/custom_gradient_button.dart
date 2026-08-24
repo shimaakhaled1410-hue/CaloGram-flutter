@@ -6,12 +6,14 @@ class CustomGradientButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isLoading;
+  final bool showAiIcon;
 
   const CustomGradientButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.showAiIcon = false,
   });
 
   @override
@@ -54,13 +56,16 @@ class CustomGradientButton extends StatelessWidget {
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.auto_awesome,
-                        color: onGradientColor,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
+                      if (showAiIcon) ...[
+                        Icon(
+                          Icons.auto_awesome,
+                          color: onGradientColor,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                      ],
                       Text(
                         text,
                         style: AppTextStyles.font16BoldDark.copyWith(

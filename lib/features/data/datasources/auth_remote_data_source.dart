@@ -12,7 +12,12 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
   });
-
+  Future<UserModel> signInAnonymously();
+  Future<UserModel> linkAccountWithEmail({
+    required String name,
+    required String email,
+    required String password,
+  });
   Future<UserModel> updateProfileMetrics({
     required String uId,
     required Map<String, dynamic> updatedData,
@@ -149,6 +154,76 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw NetworkException('No internet connection');
     } catch (_) {
       throw ServerException('Failed to sign out');
+    }
+  }
+
+  @override
+  Future<UserModel> signInAnonymously() async {
+    try {
+      final UserCredential credential = await firebaseAuth.signInAnonymously();
+      final uId = credential.user!.uid;
+
+      final UserModel guestUser = UserModel(
+        uId: uId,
+        email: '',
+        name: 'Guest User',
+      );
+
+      await firestore
+          .collection('users')
+          .doc(uId)
+          .set(guestUser.toJson(), SetOptions(merge: true));
+      return guestUser;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(e.message ?? 'Anonymous login failed');
+    } on SocketException {
+      throw NetworkException('No internet connection');
+    } catch (_) {
+      throw ServerException('Failed to continue as guest');
+    }
+  }
+
+  @override
+  Future<UserModel> linkAccountWithEmail({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final currentUser = firebaseAuth.currentUser;
+      if (currentUser == null) {
+        throw AuthException('No active guest session found');
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: email.trim(),
+        password: password,
+      );
+
+      final userCredential = await currentUser.linkWithCredential(credential);
+      final user = userCredential.user ?? currentUser;
+
+      await user.updateDisplayName(name.trim());
+
+      final updatedModel = UserModel(
+        uId: user.uid,
+        email: email.trim(),
+        name: name.trim(),
+      );
+
+      await firestore.collection('users').doc(user.uid).set({
+        'name': name.trim(),
+        'email': email.trim(),
+      }, SetOptions(merge: true));
+
+      return updatedModel;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(e.message ?? 'Failed to link account');
+    } on SocketException {
+      throw NetworkException('No internet connection');
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw ServerException('Unexpected error during account upgrade');
     }
   }
 }
