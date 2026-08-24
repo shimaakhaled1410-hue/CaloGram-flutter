@@ -46,7 +46,7 @@ Format:
           "model": "openai/gpt-oss-20b",
           "messages": [
             {"role": "system", "content": systemPrompt},
-            {"role": "user", "content": transcribedText}
+            {"role": "user", "content": transcribedText},
           ],
           "temperature": 0.3,
         }),
@@ -54,15 +54,20 @@ Format:
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-        
+
         String rawText = decoded['choices'][0]['message']['content'] as String;
-        
-        rawText = rawText.replaceAll('```json', '').replaceAll('```', '').trim();
+
+        rawText = rawText
+            .replaceAll('```json', '')
+            .replaceAll('```', '')
+            .trim();
 
         final Map<String, dynamic> foodJson = jsonDecode(rawText);
         return ScannedFoodModel.fromJson(foodJson);
       } else {
-        throw ServerException('AI Server error: ${response.statusCode} - ${response.body}');
+        throw ServerException(
+          'AI Server error: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       if (e is ServerException) rethrow;

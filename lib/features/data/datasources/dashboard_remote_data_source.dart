@@ -47,7 +47,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
           .collection('users')
           .doc(uId)
           .collection('meals')
-          .where('loggedAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where(
+            'loggedAt',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+          )
           .where('loggedAt', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
           .get();
 
@@ -61,7 +64,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     }
   }
 
- @override
+  @override
   Future<void> logMeal(String uId, MealModel meal) async {
     try {
       await firestore

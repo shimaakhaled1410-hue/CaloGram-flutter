@@ -22,8 +22,9 @@ class FoodScannerResultView extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -90,20 +91,19 @@ class FoodScannerResultView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-         CustomGradientButton(
-  text: 'Confirm & Log Meal',
-  onPressed: () {
-    context.read<FoodScannerCubit>().saveScannedMeal(
-          title: food.foodName,
-          calories: food.calories,
-          protein: food.protein,
-          carbs: food.carbs,
-          fats: food.fats,
-          mealType: 'lunch',
-        );
-  },
-),
-       
+          CustomGradientButton(
+            text: 'Confirm & Log Meal',
+            onPressed: () {
+              context.read<FoodScannerCubit>().saveScannedMeal(
+                title: food.foodName,
+                calories: food.calories,
+                protein: food.protein,
+                carbs: food.carbs,
+                fats: food.fats,
+                mealType: 'lunch',
+              );
+            },
+          ),
         ],
       ),
     );

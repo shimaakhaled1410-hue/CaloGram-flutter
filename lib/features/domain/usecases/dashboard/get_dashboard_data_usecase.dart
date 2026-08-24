@@ -8,10 +8,7 @@ class DashboardData {
   final UserEntity user;
   final List<MealEntity> meals;
 
-  const DashboardData({
-    required this.user,
-    required this.meals,
-  });
+  const DashboardData({required this.user, required this.meals});
 }
 
 class GetDashboardDataUsecase {
@@ -22,15 +19,12 @@ class GetDashboardDataUsecase {
   Future<Either<Failure, DashboardData>> call() async {
     final userResult = await dashboardRepo.fetchUserProfile();
 
-    return userResult.fold(
-      (failure) => Left(failure),
-      (user) async {
-        final mealsResult = await dashboardRepo.fetchTodayMeals();
-        return mealsResult.fold(
-          (failure) => Left(failure),
-          (meals) => Right(DashboardData(user: user, meals: meals)),
-        );
-      },
-    );
+    return userResult.fold((failure) => Left(failure), (user) async {
+      final mealsResult = await dashboardRepo.fetchTodayMeals();
+      return mealsResult.fold(
+        (failure) => Left(failure),
+        (meals) => Right(DashboardData(user: user, meals: meals)),
+      );
+    });
   }
 }

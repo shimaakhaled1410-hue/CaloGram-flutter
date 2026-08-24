@@ -22,8 +22,9 @@ class ThemeOptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return InkWell(
       onTap: onTap,
@@ -37,8 +38,8 @@ class ThemeOptionCard extends StatelessWidget {
             color: isSelected
                 ? primaryAccent
                 : (isDark
-                    ? AppColors.inputBorderDark
-                    : AppColors.inputBorderLight),
+                      ? AppColors.inputBorderDark
+                      : AppColors.inputBorderLight),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -50,8 +51,8 @@ class ThemeOptionCard extends StatelessWidget {
                 color: isSelected
                     ? primaryAccent.withValues(alpha: 0.15)
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.05)
-                        : Colors.black.withValues(alpha: 0.05)),
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.black.withValues(alpha: 0.05)),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -86,11 +87,7 @@ class ThemeOptionCard extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.check_circle_rounded,
-                color: primaryAccent,
-                size: 22,
-              )
+              Icon(Icons.check_circle_rounded, color: primaryAccent, size: 22)
             else
               Icon(
                 Icons.circle_outlined,

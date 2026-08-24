@@ -103,8 +103,9 @@ class AuthRepoImpl implements AuthRepo {
     required int targetFats,
   }) async {
     try {
-      final String? cachedUid =
-          CacheHelper.getString(key: AppConstants.cachedUserToken);
+      final String? cachedUid = CacheHelper.getString(
+        key: AppConstants.cachedUserToken,
+      );
       if (cachedUid == null || cachedUid.isEmpty) {
         return Left(AuthFailure('User session not found'));
       }
@@ -143,8 +144,9 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Either<Failure, UserEntity?>> getCurrentUser() async {
     try {
-      final String? cachedUid =
-          CacheHelper.getString(key: AppConstants.cachedUserToken);
+      final String? cachedUid = CacheHelper.getString(
+        key: AppConstants.cachedUserToken,
+      );
       if (cachedUid == null || cachedUid.isEmpty) {
         return const Right(null);
       }

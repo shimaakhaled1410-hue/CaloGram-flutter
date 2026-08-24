@@ -55,7 +55,10 @@ class _VoiceLoggerContent extends StatelessWidget {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,15 +76,16 @@ class _VoiceLoggerContent extends StatelessWidget {
                               child: TextButton.icon(
                                 onPressed: () =>
                                     context.read<VoiceLoggerCubit>().reset(),
-                                icon: const Icon(Icons.refresh_rounded, size: 18),
+                                icon: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 18,
+                                ),
                                 label: const Text('Log another meal'),
                               ),
                             ),
                           ],
                         )
-                      : const VoiceInputInputField(
-                          key: ValueKey('input_area'),
-                        ),
+                      : const VoiceInputInputField(key: ValueKey('input_area')),
                 ),
               ],
             ),

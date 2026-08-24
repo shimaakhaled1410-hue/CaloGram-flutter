@@ -6,8 +6,9 @@ abstract class CustomSnackBar {
   static void showSuccess(BuildContext context, {required String message}) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -18,19 +19,12 @@ abstract class CustomSnackBar {
             : AppColors.cardLightElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: primaryAccent,
-            width: 1.2,
-          ),
+          side: BorderSide(color: primaryAccent, width: 1.2),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         content: Row(
           children: [
-            Icon(
-              Icons.check_circle_rounded,
-              color: primaryAccent,
-              size: 22,
-            ),
+            Icon(Icons.check_circle_rounded, color: primaryAccent, size: 22),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -59,10 +53,7 @@ abstract class CustomSnackBar {
             : AppColors.cardLightElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: AppColors.error,
-            width: 1.2,
-          ),
+          side: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         content: Row(

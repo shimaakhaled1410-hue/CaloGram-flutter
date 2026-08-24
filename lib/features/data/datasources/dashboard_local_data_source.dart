@@ -72,8 +72,12 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
       if (jsonString != null && jsonString.isNotEmpty) {
         final List<dynamic> list = jsonDecode(jsonString) as List<dynamic>;
         return list
-            .map((item) =>
-                MealModel.fromJson(item as Map<String, dynamic>, item['id'] as String? ?? ''))
+            .map(
+              (item) => MealModel.fromJson(
+                item as Map<String, dynamic>,
+                item['id'] as String? ?? '',
+              ),
+            )
             .toList();
       }
       return [];
@@ -82,7 +86,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     }
   }
 
- @override
+  @override
   Future<void> cacheMeals(List<MealModel> meals) async {
     try {
       final list = meals.map((m) => m.toLocalJson()).toList();
@@ -95,6 +99,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
       throw CacheException('Failed to cache meals: $e');
     }
   }
+
   @override
   Future<void> addMealToCache(MealModel meal) async {
     final currentMeals = await getCachedMeals();

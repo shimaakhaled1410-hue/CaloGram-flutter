@@ -6,7 +6,7 @@ class ThemeCubit extends Cubit<ThemeMode> {
   final ThemeLocalDataSource localDataSource;
 
   ThemeCubit({required this.localDataSource})
-      : super(localDataSource.getSavedThemeMode());
+    : super(localDataSource.getSavedThemeMode());
 
   Future<void> changeTheme(ThemeMode mode) async {
     emit(mode);

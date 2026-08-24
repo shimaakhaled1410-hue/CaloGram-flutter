@@ -9,8 +9,9 @@ class FoodScannerLoadingView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return Center(
       child: Column(

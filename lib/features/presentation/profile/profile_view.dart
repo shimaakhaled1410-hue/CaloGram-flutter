@@ -31,8 +31,9 @@ class ProfileContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
@@ -57,9 +58,7 @@ class ProfileContent extends StatelessWidget {
           builder: (context, state) {
             if (state is ProfileLoading) {
               return Center(
-                child: CircularProgressIndicator(
-                  color: primaryAccent,
-                ),
+                child: CircularProgressIndicator(color: primaryAccent),
               );
             }
 

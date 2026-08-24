@@ -5,10 +5,7 @@ import '../../../../core/errors/exceptions.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<UserModel> signIn({
-    required String email,
-    required String password,
-  });
+  Future<UserModel> signIn({required String email, required String password});
 
   Future<UserModel> register({
     required String name,
@@ -41,11 +38,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      final UserCredential credential =
-          await firebaseAuth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
+      final UserCredential credential = await firebaseAuth
+          .signInWithEmailAndPassword(email: email.trim(), password: password);
 
       final user = await getCurrentUser(credential.user!.uid);
       if (user != null) {
@@ -70,11 +64,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      final UserCredential credential =
-          await firebaseAuth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
+      final UserCredential credential = await firebaseAuth
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password,
+          );
 
       final UserModel userModel = UserModel(
         uId: credential.user!.uid,
@@ -122,8 +116,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser(String uId) async {
     try {
-      final DocumentSnapshot doc =
-          await firestore.collection('users').doc(uId).get();
+      final DocumentSnapshot doc = await firestore
+          .collection('users')
+          .doc(uId)
+          .get();
 
       if (doc.exists && doc.data() != null) {
         return UserModel.fromJson(doc.data() as Map<String, dynamic>);

@@ -18,8 +18,9 @@ class ProfileTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +46,9 @@ class ProfileTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: 'Enter $label',
             hintStyle: AppTextStyles.font14RegularMuted.copyWith(
-              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+              color: isDark
+                  ? AppColors.textMutedDark
+                  : AppColors.textMutedLight,
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -71,10 +74,7 @@ class ProfileTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(
-                color: primaryAccent,
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: primaryAccent, width: 1.5),
             ),
           ),
         ),

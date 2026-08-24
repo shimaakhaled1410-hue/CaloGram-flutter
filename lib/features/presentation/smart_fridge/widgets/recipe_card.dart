@@ -14,8 +14,9 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -24,7 +25,9 @@ class RecipeCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AppColors.inputBorderDark : AppColors.inputBorderLight,
+          color: isDark
+              ? AppColors.inputBorderDark
+              : AppColors.inputBorderLight,
         ),
       ),
       child: Column(
@@ -76,9 +79,7 @@ class RecipeCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.black26
-                  : AppColors.backgroundLight,
+              color: isDark ? Colors.black26 : AppColors.backgroundLight,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(

@@ -12,12 +12,14 @@ class VoiceTextDisplayArea extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     String displayText = 'Tap the mic and say what you ate...';
-    Color textColor =
-        isDark ? AppColors.textMutedDark : AppColors.textMutedLight;
+    Color textColor = isDark
+        ? AppColors.textMutedDark
+        : AppColors.textMutedLight;
 
     if (state is VoiceLoggerListening) {
       displayText = (state as VoiceLoggerListening).recognizedText;

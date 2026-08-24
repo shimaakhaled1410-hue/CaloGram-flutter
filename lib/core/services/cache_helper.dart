@@ -21,10 +21,7 @@ class CacheHelper {
     return await _preferences.setBool(key, value);
   }
 
-  static Future<bool> setInt({
-    required String key,
-    required int value,
-  }) async {
+  static Future<bool> setInt({required String key, required int value}) async {
     return await _preferences.setInt(key, value);
   }
 

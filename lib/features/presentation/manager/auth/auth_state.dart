@@ -1,6 +1,5 @@
 import 'package:calogram_flutter/features/domain/entities/user_entity.dart';
 
-
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}

@@ -17,8 +17,9 @@ class CustomGradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onGradientColor =
-        isDark ? AppColors.backgroundDark : AppColors.textMainLight;
+    final onGradientColor = isDark
+        ? AppColors.backgroundDark
+        : AppColors.textMainLight;
 
     return Container(
       width: double.infinity,
@@ -28,7 +29,9 @@ class CustomGradientButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryNeonLime.withValues(alpha: isDark ? 0.3 : 0.25),
+            color: AppColors.primaryNeonLime.withValues(
+              alpha: isDark ? 0.3 : 0.25,
+            ),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -52,7 +55,11 @@ class CustomGradientButton extends StatelessWidget {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.auto_awesome, color: onGradientColor, size: 20),
+                      Icon(
+                        Icons.auto_awesome,
+                        color: onGradientColor,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         text,

@@ -54,12 +54,12 @@ Output ONLY a raw valid JSON object without markdown fences (no ```json):
                 {
                   "inline_data": {
                     "mime_type": "image/jpeg",
-                    "data": base64Image
-                  }
-                }
-              ]
-            }
-          ]
+                    "data": base64Image,
+                  },
+                },
+              ],
+            },
+          ],
         }),
       );
 
@@ -71,12 +71,17 @@ Output ONLY a raw valid JSON object without markdown fences (no ```json):
         }
 
         String rawText = candidates[0]['content']['parts'][0]['text'] as String;
-        rawText = rawText.replaceAll('```json', '').replaceAll('```', '').trim();
+        rawText = rawText
+            .replaceAll('```json', '')
+            .replaceAll('```', '')
+            .trim();
 
         final Map<String, dynamic> foodJson = jsonDecode(rawText);
         return ScannedFoodModel.fromJson(foodJson);
       } else {
-        throw ServerException('AI Server error: ${response.statusCode} - ${response.body}');
+        throw ServerException(
+          'AI Server error: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       if (e is ServerException) rethrow;

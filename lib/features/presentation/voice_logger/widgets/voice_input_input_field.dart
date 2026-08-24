@@ -31,10 +31,12 @@ class _VoiceInputInputFieldState extends State<VoiceInputInputField> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
-    final onAccentColor =
-        isDark ? AppColors.backgroundDark : AppColors.textMainLight;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
+    final onAccentColor = isDark
+        ? AppColors.backgroundDark
+        : AppColors.textMainLight;
 
     return BlocListener<VoiceLoggerCubit, VoiceLoggerState>(
       listener: (context, state) {
@@ -116,9 +118,9 @@ class _VoiceInputInputFieldState extends State<VoiceInputInputField> {
                                   color: primaryAccent,
                                 ),
                                 onPressed: () {
-                                  context
-                                      .read<VoiceLoggerCubit>()
-                                      .analyzeText(_controller.text);
+                                  context.read<VoiceLoggerCubit>().analyzeText(
+                                    _controller.text,
+                                  );
                                 },
                               );
                             }
@@ -149,8 +151,9 @@ class _VoiceInputInputFieldState extends State<VoiceInputInputField> {
                       width: 52,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient:
-                            isAnalyzing ? null : AppColors.primaryLimeGradient,
+                        gradient: isAnalyzing
+                            ? null
+                            : AppColors.primaryLimeGradient,
                         color: isAnalyzing
                             ? (isDark ? Colors.grey[800] : Colors.grey[300])
                             : null,
@@ -175,14 +178,14 @@ class _VoiceInputInputFieldState extends State<VoiceInputInputField> {
                           ? Padding(
                               padding: const EdgeInsets.all(14.0),
                               child: CircularProgressIndicator(
-                                color: isDark
-                                    ? Colors.white54
-                                    : Colors.black45,
+                                color: isDark ? Colors.white54 : Colors.black45,
                                 strokeWidth: 2.2,
                               ),
                             )
                           : Icon(
-                              isListening ? Icons.stop_rounded : Icons.mic_rounded,
+                              isListening
+                                  ? Icons.stop_rounded
+                                  : Icons.mic_rounded,
                               size: 26,
                               color: onAccentColor,
                             ),

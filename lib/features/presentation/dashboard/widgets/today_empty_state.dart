@@ -17,8 +17,9 @@ class TodayEmptyState extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? AppColors.inputBorderDark : AppColors.inputBorderLight,
+          color: isDark
+              ? AppColors.inputBorderDark
+              : AppColors.inputBorderLight,
           width: 1,
         ),
       ),

@@ -21,8 +21,9 @@ class TodayMealItem extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final primaryAccent =
-        isDark ? AppColors.primaryNeonLime : AppColors.primaryLimeDark;
+    final primaryAccent = isDark
+        ? AppColors.primaryNeonLime
+        : AppColors.primaryLimeDark;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -30,8 +31,9 @@ class TodayMealItem extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? AppColors.inputBorderDark : AppColors.inputBorderLight,
+          color: isDark
+              ? AppColors.inputBorderDark
+              : AppColors.inputBorderLight,
           width: 1,
         ),
       ),
