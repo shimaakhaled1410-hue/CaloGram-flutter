@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/theme/app_colors.dart';
 import 'package:calogram_flutter/core/widgets/custom_snack_bar.dart';
 import 'package:calogram_flutter/features/presentation/manager/voice_logger/voice_logger_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/voice_logger/voice_logger_state.dart';
@@ -27,6 +28,7 @@ class _VoiceLoggerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -62,6 +64,62 @@ class _VoiceLoggerContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (state is! VoiceLoggerSuccess) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.cardDarkElevated.withValues(alpha: 0.6)
+                          : AppColors.cardLightElevated,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color:
+                            (isDark
+                                    ? AppColors.primaryNeonLime
+                                    : AppColors.primaryLimeDark)
+                                .withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.tips_and_updates_outlined,
+                          size: 20,
+                          color: isDark
+                              ? AppColors.primaryNeonLime
+                              : AppColors.primaryLimeDark,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Speak or type what you ate',
+                                style: AppTextStyles.font14SemiBoldWhite
+                                    .copyWith(
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Say e.g., "2 boiled eggs with brown toast and coffee" and AI will extract the nutrition data automatically.',
+                                style: AppTextStyles.font12MediumMuted.copyWith(
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondaryLight,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: state is VoiceLoggerSuccess

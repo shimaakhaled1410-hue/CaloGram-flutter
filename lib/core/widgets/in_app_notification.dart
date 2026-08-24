@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import '../router/app_router.dart';
 import '../theme/app_colors.dart';
@@ -6,6 +7,8 @@ import '../theme/app_text_styles.dart';
 
 class InAppNotification {
   InAppNotification._();
+
+  static final AudioPlayer _audioPlayer = AudioPlayer();
 
   static void show(
     BuildContext context, {
@@ -16,6 +19,11 @@ class InAppNotification {
     VoidCallback? onTap,
     Duration duration = const Duration(seconds: 4),
   }) {
+    try {
+      _audioPlayer.stop();
+      _audioPlayer.play(AssetSource('sounds/notification_sound.mp3'));
+    } catch (_) {}
+
     final OverlayState? overlay =
         Overlay.maybeOf(context) ??
         AppRouter.navigatorKey.currentState?.overlay;

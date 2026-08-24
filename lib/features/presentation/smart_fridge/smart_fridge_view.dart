@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/theme/app_colors.dart';
 import 'package:calogram_flutter/core/widgets/custom_gradient_button.dart';
 import 'package:calogram_flutter/core/widgets/custom_snack_bar.dart';
 import 'package:calogram_flutter/features/presentation/manager/smart_fridge/smart_fridge_cubit.dart';
@@ -48,6 +49,8 @@ class _SmartFridgeContentState extends State<_SmartFridgeContent> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -79,6 +82,58 @@ class _SmartFridgeContentState extends State<_SmartFridgeContent> {
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.cardDarkElevated.withValues(alpha: 0.6)
+                      : AppColors.cardLightElevated,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color:
+                        (isDark
+                                ? AppColors.primaryNeonLime
+                                : AppColors.primaryLimeDark)
+                            .withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.kitchen_rounded,
+                      size: 22,
+                      color: isDark
+                          ? AppColors.primaryNeonLime
+                          : AppColors.primaryLimeDark,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cook with what you have',
+                            style: AppTextStyles.font14SemiBoldWhite.copyWith(
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Add ingredients in your kitchen (e.g. eggs, tomatoes, cheese) and AI will craft healthy recipe ideas for you.',
+                            style: AppTextStyles.font12MediumMuted.copyWith(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               SmartFridgeInputField(
                 controller: _inputController,
                 onSubmit: _submitIngredient,

@@ -3,6 +3,7 @@ import 'package:calogram_flutter/features/presentation/auth/login_view.dart';
 import 'package:calogram_flutter/features/presentation/auth/register_view.dart';
 import 'package:calogram_flutter/features/presentation/dashboard/dashboard_view.dart';
 import 'package:calogram_flutter/features/presentation/goal_setup/goal_setup_view.dart';
+import 'package:calogram_flutter/features/presentation/notifications/notifications_view.dart';
 import 'package:calogram_flutter/features/presentation/onboarding/onboarding_view.dart';
 import 'package:calogram_flutter/features/presentation/profile/edit_profile_view.dart';
 import 'package:calogram_flutter/features/presentation/profile/settings_view.dart';
@@ -59,6 +60,10 @@ abstract class AppRouter {
       GoRoute(
         path: AppRoutes.notificationSettingsScreen,
         builder: (context, state) => const NotificationSettingsView(),
+      ),
+      GoRoute(
+        path: AppRoutes.notificationsScreen,
+        builder: (context, state) => const NotificationsView(),
       ),
     ],
   );

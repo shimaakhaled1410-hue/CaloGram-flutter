@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 import 'cache_helper.dart';
@@ -5,6 +6,8 @@ import 'notification_service.dart';
 
 class NotificationHelper {
   NotificationHelper._();
+
+  static final List<Timer> _foregroundTimers = [];
 
   static const TimeOfDay defaultWaterMorning = TimeOfDay(hour: 10, minute: 0);
   static const TimeOfDay defaultWaterAfternoon = TimeOfDay(
@@ -142,6 +145,127 @@ class NotificationHelper {
     } else {
       await service.cancelNotification(NotificationService.dinnerId);
     }
+
+    syncForegroundTimers();
+  }
+
+  static void syncForegroundTimers() {
+    cancelForegroundTimers();
+
+    final now = DateTime.now();
+
+    void addTimer({
+      required bool isEnabled,
+      required TimeOfDay time,
+      required int id,
+      required String title,
+      required String body,
+    }) {
+      if (!isEnabled) return;
+
+      var scheduledTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        time.hour,
+        time.minute,
+      );
+
+      if (scheduledTime.isBefore(now)) {
+        scheduledTime = scheduledTime.add(const Duration(days: 1));
+      }
+
+      final diff = scheduledTime.difference(now);
+
+      final timer = Timer(diff, () {
+        NotificationService.instance.showInstantNotification(
+          id: id,
+          title: title,
+          body: body,
+        );
+        syncForegroundTimers();
+      });
+
+      _foregroundTimers.add(timer);
+    }
+
+    final isWaterEnabled =
+        CacheHelper.getBool(key: AppConstants.notifWaterEnabled) ?? true;
+    if (isWaterEnabled) {
+      addTimer(
+        isEnabled: isWaterEnabled,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifWaterMorning),
+          defaultWaterMorning,
+        ),
+        id: NotificationService.waterMorningId,
+        title: 'Time to Hydrate!',
+        body: 'Start your morning strong with a fresh glass of water.',
+      );
+      addTimer(
+        isEnabled: isWaterEnabled,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifWaterAfternoon),
+          defaultWaterAfternoon,
+        ),
+        id: NotificationService.waterAfternoonId,
+        title: 'Afternoon Hydration Boost',
+        body: 'Keep your energy high! Drink a glass of water now.',
+      );
+      addTimer(
+        isEnabled: isWaterEnabled,
+        time: stringToTime(
+          CacheHelper.getString(key: AppConstants.notifWaterEvening),
+          defaultWaterEvening,
+        ),
+        id: NotificationService.waterEveningId,
+        title: 'Evening Water Check',
+        body: 'Stay hydrated before your evening routine.',
+      );
+    }
+
+    addTimer(
+      isEnabled:
+          CacheHelper.getBool(key: AppConstants.notifBreakfastEnabled) ?? true,
+      time: stringToTime(
+        CacheHelper.getString(key: AppConstants.notifBreakfastTime),
+        defaultBreakfast,
+      ),
+      id: NotificationService.breakfastId,
+      title: 'Breakfast Time!',
+      body: 'Fuel up for the day and remember to log your breakfast.',
+    );
+
+    addTimer(
+      isEnabled:
+          CacheHelper.getBool(key: AppConstants.notifLunchEnabled) ?? true,
+      time: stringToTime(
+        CacheHelper.getString(key: AppConstants.notifLunchTime),
+        defaultLunch,
+      ),
+      id: NotificationService.lunchId,
+      title: 'Healthy Lunch Break',
+      body: 'Time for lunch! Keep track of your calories and macros.',
+    );
+
+    addTimer(
+      isEnabled:
+          CacheHelper.getBool(key: AppConstants.notifDinnerEnabled) ?? true,
+      time: stringToTime(
+        CacheHelper.getString(key: AppConstants.notifDinnerTime),
+        defaultDinner,
+      ),
+      id: NotificationService.dinnerId,
+      title: 'Dinner & Day Wrap-up',
+      body: 'Enjoy your dinner and check your remaining calorie target.',
+    );
+  }
+
+  static void cancelForegroundTimers() {
+    for (var t in _foregroundTimers) {
+      t.cancel();
+    }
+    _foregroundTimers.clear();
   }
 
   static Future<void> checkAndNotifyCalorieLimit({

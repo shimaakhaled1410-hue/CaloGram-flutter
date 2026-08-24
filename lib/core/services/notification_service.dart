@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:calogram_flutter/core/services/notification_storage_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -108,11 +109,11 @@ class NotificationService {
   }) {
     return NotificationDetails(
       android: AndroidNotificationDetails(
-        channelId,
+        '${channelId}_v3',
         channelName,
         channelDescription: channelDescription,
         importance: Importance.max,
-        priority: Priority.high,
+        priority: Priority.max,
         playSound: true,
         enableVibration: true,
         sound: const RawResourceAndroidNotificationSound(_customSoundName),
@@ -133,6 +134,12 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
+    await NotificationStorageService.instance.addNotification(
+      title: title,
+      message: body,
+      type: id == calorieLimitExceededId ? 'calorie_limit' : 'system',
+    );
+
     if (!isSupportedPlatform) {
       return;
     }
@@ -184,7 +191,7 @@ class NotificationService {
           channelName: channelName,
           channelDescription: 'Daily scheduled reminders with sound',
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
         matchDateTimeComponents: DateTimeComponents.time,
         payload: payload,
       );

@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:calogram_flutter/core/router/app_router.dart';
 import 'package:calogram_flutter/core/services/notification_helper.dart';
 import 'package:calogram_flutter/core/services/notification_service.dart';
+import 'package:calogram_flutter/core/services/notification_storage_service.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/theme/theme_cubit.dart';
 import 'package:calogram_flutter/firebase_options.dart';
@@ -11,12 +12,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'core/services/cache_helper.dart';
 import 'core/services/service_locator.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CacheHelper.init();
@@ -28,6 +31,7 @@ void main() async {
       NotificationHelper.syncAllScheduledNotifications();
     });
   }
+  await NotificationStorageService.init();
 
   final bool isDesktopOrWeb =
       kIsWeb || (!Platform.isAndroid && !Platform.isIOS);

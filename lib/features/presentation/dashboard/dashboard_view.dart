@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/services/notification_helper.dart';
 import 'package:calogram_flutter/features/presentation/food_scanner/food_scanner_view.dart';
 import 'package:calogram_flutter/features/presentation/profile/profile_view.dart';
 import 'package:calogram_flutter/features/presentation/smart_fridge/smart_fridge_view.dart';
@@ -26,6 +27,18 @@ class _DashboardViewState extends State<DashboardView> {
     ProfileView(),
     FoodScannerView(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationHelper.syncForegroundTimers();
+  }
+
+  @override
+  void dispose() {
+    NotificationHelper.cancelForegroundTimers();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

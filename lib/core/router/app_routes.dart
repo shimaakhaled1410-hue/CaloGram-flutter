@@ -9,4 +9,5 @@ abstract class AppRoutes {
   static const String settingsScreen = '/settings';
   static const String themeSelectionScreen = '/themeSelectionScreen';
   static const String notificationSettingsScreen = '/notification-settings';
+  static const String notificationsScreen = '/notificationsScreen';
 }
