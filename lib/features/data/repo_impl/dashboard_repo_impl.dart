@@ -98,17 +98,12 @@ class DashboardRepoImpl implements DashboardRepo {
       await localDataSource.addMealToCache(mealModel);
       return const Right(null);
     } on AuthException catch (e) {
-      print('🛑 Auth Exception in logMeal: ${e.message}');
       return Left(AuthFailure(e.message));
     } on ServerException catch (e) {
-      print('🛑 Server Exception in logMeal: ${e.message}');
       return Left(ServerFailure(e.message));
     } on NetworkException catch (e) {
-      print('🛑 Network Exception in logMeal: ${e.message}');
       return Left(NetworkFailure(e.message));
-    } catch (e, stackTrace) {
-      print('🛑 Unhandled Exception in logMeal: $e');
-      print('🛑 StackTrace: $stackTrace');
+    } catch (e, _) {
       return Left(ServerFailure(e.toString()));
     }
   }
