@@ -48,25 +48,16 @@ lib/
     └── presentation/
         ├── manager/        # BLoC / Cubit state management
         └── views/          # Screen UI views, tabs, and widgets
+```
 
-
-🛠️ Tech Stack & Libraries
-Framework: Flutter (Dart 3+)
-
-Architecture & State Management: flutter_bloc, bloc, dartz, equatable
-
-Dependency Injection: get_it
-
-Backend & Cloud: firebase_core, firebase_auth, cloud_firestore
-
-AI Integrations: Google Gemini API & Groq Cloud API (http, flutter_dotenv)
-
-Local Storage & Caching: hive_flutter, shared_preferences
-
-Routing & Navigation: go_router
-
-Notifications & Audio: flutter_local_notifications, flutter_timezone, audioplayers
-
-Hardware & Inputs: image_picker, speech_to_text, permission_handler
-
-UI & Styling: google_fonts, flutter_svg, device_preview
+## 🛠️ Tech Stack & Libraries
+* **Framework:** Flutter (Dart 3+)
+* **Architecture & State Management:** `flutter_bloc`, `bloc`, `dartz`, `equatable`
+* **Dependency Injection:** `get_it`
+* **Backend & Cloud:** `firebase_core`, `firebase_auth`, `cloud_firestore`
+* **AI Integrations:** Google Gemini API & Groq Cloud API (`http`, `flutter_dotenv`)
+* **Local Storage & Caching:** `hive_flutter`, `shared_preferences`
+* **Routing & Navigation:** `go_router`
+* **Notifications & Audio:** `flutter_local_notifications`, `flutter_timezone`, `audioplayers`
+* **Hardware & Inputs:** `image_picker`, `speech_to_text`, `permission_handler`
+* **UI & Styling:** `google_fonts`, `flutter_svg`, `device_preview`
