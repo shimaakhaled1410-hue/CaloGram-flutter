@@ -1,3 +1,4 @@
+import 'package:calogram_flutter/core/services/notification_helper.dart';
 import 'package:calogram_flutter/features/domain/entities/user_entity.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/delete_meal_usecase.dart';
 import 'package:calogram_flutter/features/domain/usecases/dashboard/get_dashboard_data_usecase.dart';
@@ -50,6 +51,11 @@ class DashboardCubit extends Cubit<DashboardState> {
         consumedCarbs: totalCarbs,
         consumedFats: totalFats,
       ),
+    );
+
+    NotificationHelper.checkAndNotifyCalorieLimit(
+      totalCalories: totalCalories,
+      targetCalories: user.targetCalories ?? 0,
     );
   }
 

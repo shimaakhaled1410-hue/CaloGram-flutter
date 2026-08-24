@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:calogram_flutter/core/router/app_router.dart';
+import 'package:calogram_flutter/core/services/notification_helper.dart';
 import 'package:calogram_flutter/core/services/notification_service.dart';
 import 'package:calogram_flutter/features/presentation/manager/auth/auth_cubit.dart';
 import 'package:calogram_flutter/features/presentation/manager/theme/theme_cubit.dart';
@@ -24,6 +25,7 @@ void main() async {
   final bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
   if (isMobile) {
     await NotificationService.instance.init();
+    await NotificationHelper.syncAllScheduledNotifications();
   }
 
   final bool isDesktopOrWeb =
