@@ -59,6 +59,14 @@ class SettingsView extends StatelessWidget {
               );
             },
           ),
+          const SizedBox(height: 12),
+          _buildSettingsTile(
+            context: context,
+            icon: Icons.notifications_active_outlined,
+            title: 'Notifications & Reminders',
+            currentValue: 'Manage',
+            onTap: () => context.push(AppRoutes.notificationSettingsScreen),
+          ),
         ],
       ),
     );
