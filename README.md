@@ -68,7 +68,7 @@ CaloGram utilizes a hybrid AI architecture leveraging specialized inference pipe
 ## 🏗️ Architecture & Project Structure
 
 CaloGram is organized following Feature-First Clean Architecture principles to ensure maintainability, scalability, and testability:
-
+```
 lib/
 ├── core/
 │   ├── constants/          # App-wide constants & keys
@@ -88,7 +88,7 @@ lib/
     └── presentation/
         ├── manager/        # BLoC / Cubit state management
         └── views/          # Screen UI views, tabs, and widgets
-
+```
 ---
 
 ## 🛠️ Tech Stack & Libraries
